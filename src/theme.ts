@@ -10,6 +10,7 @@ const customConfig = defineConfig({
       colors: {
         beige: {
           100: { value: "#f6ddc8" },
+          200: { value: "#d2b7a1" },
           600: { value: "#A7856B" },
         },
       },
