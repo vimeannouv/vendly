@@ -6,10 +6,12 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import App from "./routes/App";
 import Menu from "./routes/Menu";
+import Item from "./routes/Item";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
   { path: "/menu", element: <Menu /> },
+  { path: "/item", element: <Item /> }
 ]);
 
 createRoot(document.getElementById("root")!).render(

@@ -4,7 +4,7 @@ import MyButton from "../components/elements/MyButton";
 import { useNavigate } from "react-router";
 
 const App = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <ChakraProvider value={system}>
       <Flex
@@ -37,8 +37,8 @@ const App = () => {
             w={"300px"}
             fontSize={"lg"}
             onClick={() => {
-              console.log("Taking client to the menu")
-              navigate("/menu")
+              console.log("Taking client to the menu");
+              navigate("/menu");
             }}
           >
             Customer
