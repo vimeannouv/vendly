@@ -11,7 +11,7 @@ import Item from "./routes/Item";
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
   { path: "/menu", element: <Menu /> },
-  { path: "/item", element: <Item /> }
+  { path: "/items", element: <Item /> }
 ]);
 
 createRoot(document.getElementById("root")!).render(

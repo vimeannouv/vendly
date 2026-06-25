@@ -27,23 +27,43 @@ const Menu = () => {
           w={"20%"}
           h={"100%"}
           alignContent={"center"}
-          padding={"20px"}
-          paddingRight={"10px"}
+          padding={"0px"}
+          paddingRight={"0px"}
         >
-          <MyFlex w={"100%"} h={"100%"} flexDir={"column"} gap={"15px"}>
+          <MyFlex
+            w={"110px"}
+            h={"100%"}
+            flexDir={"column"}
+            gap={"15px"}
+            borderRadius={"0px"}
+            alignItems={"center"}
+            padding={"10px"}
+          >
             {tabs.map((item, i) => (
               <MyButton
-                w={"100%"}
+                w={"85px"}
+                h={"90px"}
+                borderRadius={"28px"}
                 onClick={() => {
                   setTabName(item);
                 }}
+                backgroundColor={ (tabName == item)? "red" : "blue" }
+                transition={".1 ease-out"}
               >
                 {tabs[i]}
               </MyButton>
             ))}
           </MyFlex>
         </Flex>
-        <Flex w={"100dvw"} h={"100dvh"} padding={"20px"} paddingLeft={"10px"}>
+
+        {/* MENU RIGHT SIDE */}
+        <Flex
+          w={"dvw"}
+          h={"100dvh"}
+          padding={"20px"}
+          paddingLeft={"10px"}
+          aspectRatio={1 / 1}
+        >
           <MyFlex w={"100%"} h={"100%"}>
             <Grid
               w={"100%"}
@@ -60,7 +80,7 @@ const Menu = () => {
                     w={"200px"}
                     h={"300px"}
                     onClick={() => {
-                      navigate("/items", {state: { test: 1 }});
+                      navigate("/items", { state: { test: item } });
                     }}
                   >
                     {item}
