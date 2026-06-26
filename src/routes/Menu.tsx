@@ -58,7 +58,13 @@ const Menu = () => {
         </Flex>
 
         {/* MENU RIGHT SIDE */}
-        <Flex w={"100dvw"} h={"100dvh"} padding={"20px"} paddingLeft={"0px"} bgColor={"red"}>
+        <Flex
+          w={"100dvw"}
+          h={"100dvh"}
+          padding={"20px"}
+          paddingLeft={"0px"}
+          bgColor={"red"}
+        >
           <MyFlex w={"100%"} h={"100%"}>
             <Grid
               w={"100%"}
