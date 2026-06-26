@@ -30,6 +30,7 @@ const Menu = () => {
           padding={"0px"}
           paddingRight={"0px"}
         >
+          {/* SIDE BAR */}
           <MyFlex
             w={"110px"}
             h={"100%"}
@@ -47,7 +48,7 @@ const Menu = () => {
                 onClick={() => {
                   setTabName(item);
                 }}
-                backgroundColor={ (tabName == item)? "red" : "blue" }
+                backgroundColor={tabName == item ? "red" : "blue"}
                 transition={".1 ease-out"}
               >
                 {tabs[i]}
@@ -57,13 +58,7 @@ const Menu = () => {
         </Flex>
 
         {/* MENU RIGHT SIDE */}
-        <Flex
-          w={"dvw"}
-          h={"100dvh"}
-          padding={"20px"}
-          paddingLeft={"10px"}
-          aspectRatio={1 / 1}
-        >
+        <Flex w={"100dvw"} h={"100dvh"} padding={"20px"} paddingLeft={"0px"} bgColor={"red"}>
           <MyFlex w={"100%"} h={"100%"}>
             <Grid
               w={"100%"}
