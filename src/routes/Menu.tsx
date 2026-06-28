@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 const Menu = () => {
   const tabs = ["Burgers", "Chicken", "Tacos"];
   const menu = {
-    Burgers: ["Chicken", "Fish"],
+    Burgers: ["Chicken", "Fish", "", "", "", ""],
     Chicken: ["Buffalo wings", "Hello"],
     Tacos: ["Mexico"],
   };
@@ -24,7 +24,7 @@ const Menu = () => {
     <ChakraProvider value={system}>
       <Flex flexDir={"row"} gap={"0px"} w={"100dvw"} h={"100dvh"}>
         <Flex
-          w={"20%"}
+          w={"110px"}
           h={"100%"}
           alignContent={"center"}
           padding={"0px"}
@@ -32,7 +32,7 @@ const Menu = () => {
         >
           {/* SIDE BAR */}
           <MyFlex
-            w={"110px"}
+            w={"100%"}
             h={"100%"}
             flexDir={"column"}
             gap={"15px"}
@@ -67,19 +67,19 @@ const Menu = () => {
         >
           <MyFlex w={"100%"} h={"100%"}>
             <Grid
-              w={"100%"}
-              h={"100%"}
-              padding={"10px"}
-              autoFlow={"row"}
-              gap={"3.5px"}
-              gridTemplateColumns={"repeat(auto-fit, minmax(200px, 1fr))"}
-              justifyItems={"center"}
+              w="100%"
+              h="100%"
+              p="10px"
+              gap="10px"
+              templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
             >
               {getFoodList(tabName).map((item: string, i: number) => (
                 <GridItem w={"100%"}>
                   <MyButton
-                    w={"200px"}
-                    h={"300px"}
+                    w="160px"
+                    h="160px"
+                    bg="white"
+                    borderRadius="20px"
                     onClick={() => {
                       navigate("/items", { state: { test: item } });
                     }}
