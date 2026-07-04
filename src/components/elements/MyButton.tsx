@@ -16,7 +16,7 @@ const MyButton = ({ children, ...rest }: MyButtonProps) => {
       variant={"solid"}
       color={"colorPalette.600"}
       fontWeight={"bold"}
-      boxShadow={"0px 10px 6px   rgba(128, 115, 102, 0.4)"}
+      boxShadow={"0 2px 4px rgba(0,0,0,0.05), 0 8px 16px rgba(0,0,0,0.08), 0 16px 32px rgba(0,0,0,0.06)"}
       transition="all 0.13s ease-in-out"
       _hover={{
         bgColor: "rgba(219, 219, 219, 0.4)",

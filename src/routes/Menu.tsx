@@ -73,8 +73,8 @@ const Menu = () => {
         </MyFlex>
 
         {/* MENU AREA SIDE */}
-        <Flex flex={3} padding={"20px"} bgColor={"red"} as={"section"}>
-          <MyFlex flex={3} as={"div"}>
+        <Flex flex={3} padding={"20px"} as={"section"}>
+          <Flex flex={3} as={"div"}>
             {/* Items under the category will be displayed here */}
             <Grid
               flex={"1"}
@@ -83,6 +83,7 @@ const Menu = () => {
               templateColumns="repeat(auto-fill, minmax(150px, 1fr))"
               overflowY={"auto"}
               overflowX={"hidden"}
+              justifyContent={"center"}
             >
               {getFoodList(tabName).map((item: string, i: number) => (
                 <GridItem w={"100%"} key={i}>
@@ -100,10 +101,10 @@ const Menu = () => {
                 </GridItem>
               ))}
             </Grid>
-          </MyFlex>
+          </Flex>
         </Flex>
         {/* CART AREA */}
-        <Flex flex={1} h={"100dvh"} padding={"10px"}>
+        <Flex flex={1} h={"100dvh"} padding={"15px"}>
           <MyFlex w={"100%"} h={"100%"}>
             
           </MyFlex>

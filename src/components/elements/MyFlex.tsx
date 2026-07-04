@@ -3,15 +3,21 @@ import type { ComponentProps, ReactNode } from "react";
 import React from "react";
 
 interface FlexProp extends ComponentProps<typeof Flex> {
-  children?: ReactNode
-  
+  children?: ReactNode;
 }
 
-const MyBox = ({children, ...rest}: FlexProp) => {
-  const color = "bgColor" in rest
-  return <Flex boxShadow={"0px 10px 6px   rgba(128, 115, 102, 0.4)"} bgColor={!color? "rgba(255, 255, 255, 0.6)" : rest.bgColor} borderRadius={"3xl"} {...rest}>
-    {children}
-  </Flex>;
+const MyBox = ({ children, ...rest }: FlexProp) => {
+  const color = "bgColor" in rest;
+  return (
+    <Flex
+      boxShadow={"0 4px 6px rgba(0, 0, 0, 0.07), 0 10px 20px rgba(0, 0, 0, 0.05);"}
+      bgColor={!color ? "rgba(255, 255, 255, 0.6)" : rest.bgColor}
+      borderRadius={"3xl"}
+      {...rest}
+    >
+      {children}
+    </Flex>
+  );
 };
 
 export default MyBox;
