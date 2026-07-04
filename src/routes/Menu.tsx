@@ -8,7 +8,25 @@ import { useNavigate } from "react-router";
 const Menu = () => {
   const tabs = ["Burgers", "Chicken", "Tacos"];
   const menu = {
-    Burgers: ["Chicken", "Fish", "", "", "", ""],
+    Burgers: [
+      "Chicken",
+      "Fish",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+    ],
     Chicken: ["Buffalo wings", "Hello"],
     Tacos: ["Mexico"],
   };
@@ -22,59 +40,52 @@ const Menu = () => {
 
   return (
     <ChakraProvider value={system}>
-      <Flex flexDir={"row"} gap={"0px"} w={"100dvw"} h={"100dvh"}>
-        <Flex
-          w={"110px"}
-          h={"100%"}
-          alignContent={"center"}
-          padding={"0px"}
-          paddingRight={"0px"}
+      <Flex
+        flexDir={"row"}
+        gap={"0px"}
+        w={"100dvw"}
+        h={"100dvh"}
+        as={"section"}
+      >
+        {/* CATEGORY BAR */}
+        <MyFlex
+          flex={0}
+          flexDir={"column"}
+          gap={"15px"}
+          borderRadius={"0px"}
+          alignItems={"center"}
+          padding={"10px"}
         >
-          {/* SIDE BAR */}
-          <MyFlex
-            w={"100%"}
-            h={"100%"}
-            flexDir={"column"}
-            gap={"15px"}
-            borderRadius={"0px"}
-            alignItems={"center"}
-            padding={"10px"}
-          >
-            {tabs.map((item, i) => (
-              <MyButton
-                w={"85px"}
-                h={"90px"}
-                borderRadius={"28px"}
-                onClick={() => {
-                  setTabName(item);
-                }}
-                backgroundColor={tabName == item ? "red" : "blue"}
-                transition={".1 ease-out"}
-              >
-                {tabs[i]}
-              </MyButton>
-            ))}
-          </MyFlex>
-        </Flex>
+          {tabs.map((item, i) => (
+            <MyButton
+              w={"85px"}
+              h={"90px"}
+              borderRadius={"28px"}
+              onClick={() => {
+                setTabName(item);
+              }}
+              backgroundColor={tabName == item ? "red" : "blue"}
+              transition={".1 ease-out"}
+            >
+              {tabs[i]}
+            </MyButton>
+          ))}
+        </MyFlex>
 
-        {/* MENU RIGHT SIDE */}
-        <Flex
-          w={"100dvw"}
-          h={"100dvh"}
-          padding={"20px"}
-          paddingLeft={"0px"}
-          bgColor={"red"}
-        >
-          <MyFlex w={"100%"} h={"100%"}>
+        {/* MENU AREA SIDE */}
+        <Flex flex={3} padding={"20px"} bgColor={"red"} as={"section"}>
+          <MyFlex flex={3} as={"div"}>
+            {/* Items under the category will be displayed here */}
             <Grid
-              w="100%"
-              h="100%"
+              flex={"1"}
               p="10px"
-              gap="10px"
-              templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+              gap="15px"
+              templateColumns="repeat(auto-fill, minmax(150px, 1fr))"
+              overflowY={"auto"}
+              overflowX={"hidden"}
             >
               {getFoodList(tabName).map((item: string, i: number) => (
-                <GridItem w={"100%"}>
+                <GridItem w={"100%"} key={i}>
                   <MyButton
                     w="160px"
                     h="160px"
@@ -89,6 +100,12 @@ const Menu = () => {
                 </GridItem>
               ))}
             </Grid>
+          </MyFlex>
+        </Flex>
+        {/* CART AREA */}
+        <Flex flex={1} h={"100dvh"} padding={"10px"}>
+          <MyFlex w={"100%"} h={"100%"}>
+            
           </MyFlex>
         </Flex>
       </Flex>

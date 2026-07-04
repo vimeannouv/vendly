@@ -13,17 +13,47 @@ const Item = () => {
       <Flex
         justifyContent={"center"}
         flexDir={"row"}
-        padding={"20px"}
+        padding={"30px"}
         h={"100dvh"}
         w={"100dvw"}
-        gap={"20px"}
+        gap={"10px"}
       >
-        <MyFlex h={"100%"} w={"40%"} padding={"20px"}>
+        {/* ITEM IMAGE */}
+        <MyFlex h={"100%"} w={"35%"} padding={"20px"}>
           {test}
         </MyFlex>
-        <MyFlex h={"100%"} w={"100%"} padding={"20px"} bgColor={"none"} boxShadow={"none"}>
-          {test}
-          <MyButton>Henlo</MyButton>
+        {/* INFO SECTION */}
+        <MyFlex
+          h={"100%"}
+          w={"100%"}
+          padding={"20px"}
+          bgColor={"none"}
+          boxShadow={"none"}
+          as={"section"}
+          flexDir={"column"}
+          gap={"10px"}
+        >
+          {/* QUANTITY, DESC,... */}
+          <MyFlex h={"90%"}>
+            <Flex bgColor={"red"} w={"100%"} h={"50%"} as={"section"}>
+              hllo
+            </Flex>
+          </MyFlex>
+
+          {/*CONFIRM OR CANCEL*/}
+          <MyFlex
+            gap={"10px"}
+            bgColor={"none"}
+            boxShadow={"none"}
+            justifyContent={"space-between"}
+          >
+            <MyButton w={"49%"} size={"lg"}>
+              Confirm
+            </MyButton>
+            <MyButton w={"49%"} size={"lg"}>
+              Cancel
+            </MyButton>
+          </MyFlex>
         </MyFlex>
       </Flex>
     </ChakraProvider>
