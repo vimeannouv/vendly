@@ -9,6 +9,7 @@ const customConfig = defineConfig({
       },
       colors: {
         beige: {
+          50: {value: "	#faf0e6"},
           100: { value: "#f6ddc8" },
           200: { value: "#d2b7a1" },
           600: { value: "#A7856B" },
@@ -33,7 +34,7 @@ const customConfig = defineConfig({
       minHeight: "100vh",
     },
     body: {
-      bg: { base: "#f6ddc8", _dark: "gray.950" },
+      bgColor: { base: "#f6ddc8", _dark: "gray.950" },
       color: { base: "gray.900", _dark: "white" },
     },
   },
