@@ -9,10 +9,13 @@ import {
 } from "@chakra-ui/react";
 import MyFlex from "../components/elements/MyFlex";
 import MyButton from "../components/elements/MyButton";
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import bg from "../assets/bg.png";
 import { animated, useSpring } from "@react-spring/web";
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
+import Item from "./Item";
 
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
@@ -22,60 +25,77 @@ const gridSpringValues = {
   config: { tension: 600, friction: 60 },
 };
 
+interface Item {
+  id: number;
+  name: string;
+  price: number;
+}
+
 const Menu = () => {
   // test variables
+  const [categories, setCategories] = useState<string[]>([]);
+  const [menu, setMenu] = useState<Record<string, Item[]>>({
+    Burgers: [{ name: "loading", price: 0, id: -1 }],
+  });
+  // get my menu collection from firestore data base
+  async function fillOutMenu() {
+    try {
+      const snapshot = await getDocs(collection(db, "menu"));
 
-  const tabs = ["Burgers", "Chicken", "Tacos"];
-  const menu = {
-    Burgers: [
-      "Chicken",
-      "Fish",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ],
-    Chicken: ["Buffalo wings", "Hello"],
-    Tacos: ["Mexico"],
-  };
-  const [tabName, setTabName] = useState("Burgers");
+      const menuDb = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // fill out categories
+      const categoryDb = menuDb[0] as Record<string, any>;
+      const itemsDb = menuDb[1] as Record<string, any>;
+      const itemInfo = itemsDb.items;
+      setCategories(
+        Object.keys(categoryDb).filter((category) => category !== "id"),
+      );
+      const temp: Record<string, any> = {};
+      for (const category in categoryDb) {
+        if (category === "id") continue;
+        const itemsInCategory = [] as Record<string, any>;
+        const unfilteredItemsInCategory = categoryDb[category];
+        console.log(category + "////");
+        console.log(unfilteredItemsInCategory);
+
+        for (const i in unfilteredItemsInCategory) {
+          const itemId = unfilteredItemsInCategory[i];
+          const item = itemInfo[itemId]
+          itemsInCategory.push(item)
+        }
+        temp[category] = itemsInCategory;
+
+      }
+      setMenu(temp);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  useEffect(() => {
+    fillOutMenu();
+  }, []);
+
+  const [selectedCategory, setSelectedCategory] = useState("Burgers");
 
   // helper funcs
 
-  const getFoodList = (tabname: string) => {
-    return menu[tabname as keyof typeof menu];
+  const getFoodList = (tabname: string): Item[] => {
+    return menu[tabname] ?? [];
   };
 
+  // springs
   const navigate = useNavigate();
-
   const [highlightSpring, highlightSpringController] = useSpring(() => ({
     x: 0,
     y: 0,
     opacity: 0,
-    config: { mass: 6.7, tension: 1000, friction: 75},
+    config: { mass: 6.7, tension: 1000, friction: 75 },
   }));
+  const [buttonDimensions, setButtonDimensions] = useState({ x: 0, y: 0 }); // this is for the highlight element
 
   const [gridSpring, gridSpringController] = useSpring(() => gridSpringValues);
 
@@ -84,26 +104,28 @@ const Menu = () => {
     gridSpringController.start(gridSpringValues);
 
     // highligher animation
-    const target = ev.currentTarget
-    if (!(target)) 
-      return
-    
-    const rect = target.getBoundingClientRect();
+    const target = ev.currentTarget;
+    if (!target) return;
 
+    const rect = target.getBoundingClientRect();
     const newX = rect.left;
     const newY = rect.top;
-    
-    highlightSpringController.start({ x: newX, y: newY, opacity: 1, width: target.clientWidth, height: target.clientHeight });
+    setButtonDimensions({ x: rect.width, y: rect.height });
+    highlightSpringController.start({
+      x: newX,
+      y: newY,
+      opacity: 1,
+    });
   };
 
   return (
     <ChakraProvider value={system}>
       <AnimatedBox
-      style={highlightSpring}
+        style={highlightSpring}
         position={"absolute"}
         bgColor={"rgb(255, 255, 255)"}
-        h={"100px"}
-        w={"100px"}
+        h={buttonDimensions.y}
+        w={buttonDimensions.x}
       ></AnimatedBox>
 
       <Flex
@@ -123,9 +145,9 @@ const Menu = () => {
           borderRadius={"0px"}
           alignItems={"center"}
           padding={"10px"}
-          minW={"150px"}
           paddingLeft={"0px"}
           paddingRight={"0px"}
+          minW={"160px"}
         >
           <Heading
             paddingBottom={"20px"}
@@ -135,13 +157,13 @@ const Menu = () => {
           >
             Categories
           </Heading>
-          {tabs.map((item, i) => (
+          {categories.map((item, i) => (
             <MyButton
-              w={"100%"}
               h={"40px"}
+              w={"100%"}
               borderRadius={"0px"}
               onClick={(ev) => {
-                setTabName(item);
+                setSelectedCategory(item);
                 playAnimsOnClick(ev);
               }}
               bgColor={"transparent"}
@@ -150,7 +172,7 @@ const Menu = () => {
               key={i}
               borderBottom={"2px solid rgb(203, 192, 166)"}
             >
-              {tabs[i]}
+              {categories[i]}
             </MyButton>
           ))}
         </MyFlex>
@@ -175,11 +197,11 @@ const Menu = () => {
             justifyContent={"center"}
             position={"relative"}
           >
-            {getFoodList(tabName).map((item: string, i: number) => (
+            {getFoodList(selectedCategory).map((item: Item, i: number) => (
               <GridItem w={"100%"} key={i}>
                 <MyButton
                   w="160px"
-                  h="160px"
+                  h="200px"
                   bg="white"
                   borderRadius="14px"
                   boxShadow={
@@ -189,7 +211,7 @@ const Menu = () => {
                     navigate("/items", { state: { test: item } });
                   }}
                 >
-                  {item}
+                  {item.name}
                 </MyButton>
               </GridItem>
             ))}

@@ -3,7 +3,9 @@ import { system } from "../theme";
 import MyButton from "../components/elements/MyButton";
 import { useNavigate } from "react-router";
 
+
 const App = () => {
+
   const navigate = useNavigate();
   return (
     <ChakraProvider value={system}>
