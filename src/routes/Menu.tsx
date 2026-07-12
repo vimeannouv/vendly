@@ -10,6 +10,7 @@ import {
 import MyFlex from "../components/elements/MyFlex";
 import MyButton from "../components/elements/MyButton";
 import MenuItem from "../components/elements/MenuItem";
+import PopupLayer from "../components/elements/PopupLayer";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import bg from "../assets/bg.png";
@@ -65,11 +66,10 @@ const Menu = () => {
 
         for (const i in unfilteredItemsInCategory) {
           const itemId = unfilteredItemsInCategory[i];
-          const item = itemInfo[itemId]
-          itemsInCategory.push(item)
+          const item = itemInfo[itemId];
+          itemsInCategory.push(item);
         }
         temp[category] = itemsInCategory;
-        
       }
       setMenu(temp);
     } catch (error) {
@@ -121,6 +121,12 @@ const Menu = () => {
 
   return (
     <ChakraProvider value={system}>
+      {/* ITEM DESCRIPTION POPUP */}
+      <PopupLayer>
+
+        
+      </PopupLayer>
+      {/* HIGHLIGHT EFFECT */}
       <AnimatedBox
         style={highlightSpring}
         position={"absolute"}
@@ -210,8 +216,7 @@ const Menu = () => {
                   }
                   itemName={item.name}
                   itemPrice={item.price}
-                >
-                </MenuItem>
+                ></MenuItem>
               </GridItem>
             ))}
           </AnimatedGrid>
