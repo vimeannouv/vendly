@@ -10,7 +10,6 @@ const PopupLayer = ({ children }: PopupLayerProp) => {
     <Flex
       justifyContent={"center"}
       alignItems={"center"}
-      zIndex={5}
       w={"100%"}
       h={"100%"}
       bgColor={"red"}
