@@ -8,11 +8,14 @@ interface PopupLayerProp extends ComponentProps<typeof Flex> {
 const PopupLayer = ({ }: PopupLayerProp) => {
   return (
     <Flex
-      justifyContent={"center"}
-      alignItems={"center"}
-      w={"100%"}
-      h={"100%"}
-      bgColor={"red"}
+      w={"40%"}
+      h={"50%"}
+      bgColor={"blue"}
+      position={"absolute"}
+      zIndex={"2"}
+      top={"50%"}
+      bottom={"50%"}
+      transform={"translate(-50%, -50%)"}
     ></Flex>
   );
 };
