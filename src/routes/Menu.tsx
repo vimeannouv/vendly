@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import MyFlex from "../components/elements/MyFlex";
 import MyButton from "../components/elements/MyButton";
+import MenuItem from "../components/elements/MenuItem";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import bg from "../assets/bg.png";
@@ -68,7 +69,7 @@ const Menu = () => {
           itemsInCategory.push(item)
         }
         temp[category] = itemsInCategory;
-
+        
       }
       setMenu(temp);
     } catch (error) {
@@ -193,26 +194,24 @@ const Menu = () => {
             flex={1}
             p="10px"
             gap="15px"
-            templateColumns="repeat(auto-fill, minmax(150px, 1fr))"
+            templateColumns="repeat(auto-fill, minmax(180px, 1fr))"
             justifyContent={"center"}
             position={"relative"}
           >
             {getFoodList(selectedCategory).map((item: Item, i: number) => (
               <GridItem w={"100%"} key={i}>
-                <MyButton
-                  w="160px"
-                  h="200px"
+                <MenuItem
+                  w="180px"
+                  h="250px"
                   bg="white"
                   borderRadius="14px"
                   boxShadow={
                     "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.2);"
                   }
-                  onClick={() => {
-                    navigate("/items", { state: { test: item } });
-                  }}
+                  itemName={item.name}
+                  itemPrice={item.price}
                 >
-                  {item.name}
-                </MyButton>
+                </MenuItem>
               </GridItem>
             ))}
           </AnimatedGrid>
