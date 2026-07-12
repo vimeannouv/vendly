@@ -12,7 +12,7 @@ import MyButton from "../components/elements/MyButton";
 import MenuItem from "../components/elements/MenuItem";
 import PopupLayer from "../components/elements/PopupLayer";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+//import { useNavigate } from "react-router";
 import bg from "../assets/bg.png";
 import { animated, useSpring } from "@react-spring/web";
 import { db } from "../firebase";
@@ -89,7 +89,7 @@ const Menu = () => {
   };
 
   // springs
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [highlightSpring, highlightSpringController] = useSpring(() => ({
     x: 0,
     y: 0,

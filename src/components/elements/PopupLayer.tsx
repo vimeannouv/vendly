@@ -5,7 +5,7 @@ interface PopupLayerProp extends ComponentProps<typeof Flex> {
   children?: ReactNode;
 }
 
-const PopupLayer = ({ children }: PopupLayerProp) => {
+const PopupLayer = ({ }: PopupLayerProp) => {
   return (
     <Flex
       justifyContent={"center"}

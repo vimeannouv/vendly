@@ -1,6 +1,5 @@
 import { system } from "../theme";
-import { ChakraProvider, Heading, Flex } from "@chakra-ui/react";
-import React from "react";
+import { ChakraProvider, Flex } from "@chakra-ui/react";
 import { useLocation } from "react-router";
 import MyFlex from "../components/elements/MyFlex";
 import MyButton from "../components/elements/MyButton";
