@@ -6,20 +6,16 @@ interface PopupLayerProp extends ComponentProps<typeof Flex> {
 }
 
 const PopupLayer = ({ ...rest }: PopupLayerProp) => {
-
-  const [quantity, setQuantity] = useState(0)
-
+  const [quantity, setQuantity] = useState(0);
+  
   function addQuantity(amount: number) {
-    const newQuantity = quantity + amount
-    if (newQuantity < 0)
-      return
-    if (newQuantity >= 100)
-      return
-    setQuantity(quantity + amount)
+    const newQuantity = quantity + amount;
+    if (newQuantity < 0) return;
+    if (newQuantity >= 100) return;
+    setQuantity(quantity + amount);
   }
 
   return (
-
     <Flex
       w={"100%"}
       h={"100%"}
@@ -39,13 +35,10 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
         transform={"translate(-50%, -50%)"}
         borderRadius={"40px"}
         flexDir={"row"}
-
         {...rest}
       >
         {/* IMAGE DISPLAY */}
-        <Box flex={1} h={"100%"}>
-
-        </Box>
+        <Box flex={1} h={"100%"}></Box>
         {/* ITEM NAME, PRICE, QUANTITY */}
 
         <Flex
@@ -60,9 +53,7 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
         >
           <Flex flexDir={"column"} alignItems={"center"} gap={"20px"}>
             {/* name */}
-            <Text flex={1}>
-              Test Burger
-            </Text>
+            <Text flex={1}>Test Burger</Text>
             {/* price */}
             <Text
               borderRadius={"30px"}
@@ -76,11 +67,11 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
               justifyContent={"center"}
               textAlign={"center"}
               fontSize={"2xl"}
+              
             >
               {`$100.99`}
             </Text>
           </Flex>
-
           {/* quantity */}
 
           <Flex
@@ -105,14 +96,14 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
                 bgColor={"#fff0e5"}
                 color={"rgb(216, 168, 96)"}
                 fontSize={"40px"}
-                onClick={() => { addQuantity(-1) }}
+                onClick={() => {
+                  addQuantity(-1);
+                }}
               >
                 -
               </Button>
               {/* display quantitit */}
-              <Text color={"rgb(181, 133, 62)"}>
-                {quantity}
-              </Text>
+              <Text color={"rgb(181, 133, 62)"}>{quantity}</Text>
               {/* + quanitty */}
               <Button
                 borderRadius={"100%"}
@@ -121,20 +112,17 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
                 bgColor={"#fff0e5"}
                 color={"rgb(216, 168, 96)"}
                 fontSize={"40px"}
-                onClick={() => { addQuantity(1) }}
+                onClick={() => {
+                  addQuantity(1);
+                }}
               >
                 +
               </Button>
             </Flex>
-
           </Flex>
-
-
         </Flex>
-
       </Flex>
     </Flex>
-
   );
 };
 
