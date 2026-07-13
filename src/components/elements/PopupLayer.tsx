@@ -40,7 +40,6 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
         {/* IMAGE DISPLAY */}
         <Box flex={1} h={"100%"}></Box>
         {/* ITEM NAME, PRICE, QUANTITY */}
-
         <Flex
           flex={1}
           h={"100%"}
@@ -81,7 +80,7 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
             flex={1}
             gap={"20px"}
           >
-            <Text>Quantity:</Text>
+            <Text fontSize={"2xl"}>Quantity:</Text>
             <Flex
               justifyContent={"space-between"}
               flexDir={"row"}
@@ -122,6 +121,11 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
           </Flex>
         </Flex>
       </Flex>
+
+      <Flex>
+        
+      </Flex>
+
     </Flex>
   );
 };

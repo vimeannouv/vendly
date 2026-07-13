@@ -7,6 +7,7 @@ interface FlexProp extends ComponentProps<typeof Flex> {
 
 const MyBox = ({ children, ...rest }: FlexProp) => {
   const color = "bgColor" in rest;
+  
   return (
     <Flex
       boxShadow={"0 4px 6px rgba(0, 0, 0, 0.07), 0 10px 20px rgba(0, 0, 0, 0.05);"}
