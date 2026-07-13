@@ -5,7 +5,7 @@ const customConfig = defineConfig({
   theme: {
     tokens: {
       fonts: {
-        heading: { value: "'Baloo 2 Variable', system-ui" },
+        body: { value: "'Baloo 2 Variable', system-ui" }
       },
       colors: {
         beige: {

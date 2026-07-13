@@ -17,7 +17,6 @@ import bg from "../assets/bg.png";
 import { animated, useSpring } from "@react-spring/web";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
-import Item from "./Item";
 
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
@@ -124,7 +123,7 @@ const Menu = () => {
       {/* ITEM DESCRIPTION POPUP */}
       <PopupLayer>
 
-        
+
       </PopupLayer>
       {/* HIGHLIGHT EFFECT */}
       <AnimatedBox
