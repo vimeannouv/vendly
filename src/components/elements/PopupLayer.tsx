@@ -1,13 +1,20 @@
-import { Flex, Box, Text, Button } from "@chakra-ui/react";
+import { Flex, Box, Text, Button, Image } from "@chakra-ui/react";
 import { useState, type ComponentProps } from "react";
-
+import na from "../../assets/na.png";
 interface PopupLayerProp extends ComponentProps<typeof Flex> {
   price: number;
   foodItemID: number;
   name: string;
   hidden?: boolean;
+  imageUrl?: string;
   onClickCancel: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  onClickConfirm: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, quantity: number, itemName: string, id: number, price: number) => void;
+  onClickConfirm: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    quantity: number,
+    itemName: string,
+    id: number,
+    price: number,
+  ) => void;
 }
 
 const PopupLayer = ({
@@ -15,23 +22,25 @@ const PopupLayer = ({
   price,
   name,
   foodItemID,
+  imageUrl,
   onClickCancel,
   onClickConfirm,
   ...rest
 }: PopupLayerProp) => {
   const [quantity, setQuantity] = useState(1);
 
+  if (!imageUrl) imageUrl = na;
   // aux func
- const addQuantity = (amount: number) => {
+  const addQuantity = (amount: number) => {
     const newQuantity = quantity + amount;
     if (newQuantity < 1) return;
     if (newQuantity >= 100) return;
     setQuantity(quantity + amount);
-  }
+  };
 
   const buttonClicked = () => {
     setQuantity(1);
-  }
+  };
 
   return (
     <Flex
@@ -57,7 +66,9 @@ const PopupLayer = ({
         {...rest}
       >
         {/* IMAGE DISPLAY */}
-        <Box flex={1} h={"100%"}></Box>
+        <Box flex={1} h={"100%"}>
+          <Image src={imageUrl} alt={name} w={"100%"} h={"100%"} objectFit={"contain"} />
+        </Box>
         {/* ITEM NAME, PRICE, QUANTITY */}
         <Flex
           flex={1}
@@ -68,6 +79,8 @@ const PopupLayer = ({
           fontSize={"3xl"}
           gap={"6px"}
           justifyContent={"space-between"}
+          overflowY={"auto"}
+          overflowX={"hidden"}
         >
           <Flex flexDir={"column"} alignItems={"center"} gap={"20px"}>
             {/* name */}
@@ -155,7 +168,10 @@ const PopupLayer = ({
               bgColor={"#ffe5e5"}
               color={"rgb(216, 96, 96)"}
               fontSize={"2xl"}
-              onClick={(ev)=>{onClickCancel(ev); buttonClicked()}}
+              onClick={(ev) => {
+                onClickCancel(ev);
+                buttonClicked();
+              }}
             >
               Cancel
             </Button>
@@ -168,7 +184,8 @@ const PopupLayer = ({
               color={"rgb(52, 117, 50)"}
               fontSize={"2xl"}
               onClick={(e) => {
-                onClickConfirm && onClickConfirm(e, quantity, name, foodItemID, price);
+                onClickConfirm &&
+                  onClickConfirm(e, quantity, name, foodItemID, price);
                 buttonClicked();
               }}
             >

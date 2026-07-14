@@ -1,23 +1,47 @@
-import { Button, Flex, Box, Text } from "@chakra-ui/react";
+import { Button, Flex, Box, Text, Image } from "@chakra-ui/react";
 import type { ComponentProps } from "react";
 import MyButton from "./MyButton";
+import na from "../../assets/na.png";
 
 interface MenuItemProps extends ComponentProps<typeof Button> {
   itemName: string;
   itemPrice: number;
-  itemImage?: any;
+  imageUrl?: string;
 }
 
-const MenuItem = ({ itemName, itemPrice, ...rest }: MenuItemProps) => {
+const MenuItem = ({
+  itemName,
+  itemPrice,
+  imageUrl,
+  ...rest
+}: MenuItemProps) => {
+  if (!imageUrl) {
+    imageUrl = na;
+  }
   return (
     <MyButton {...rest} padding={"10px"}>
       <Flex w={"100%"} h={"100%"} flexDir={"column"} gap={"10px"}>
         {/* IMAGE */}
-        <Box flex={"2"} w={"100%"} bgColor={"#ffc8c8"} borderRadius={"30px"}></Box>
+        <Box flex="1" w={"100%"} borderRadius={"30px"}>
+          <Image
+            src={imageUrl}
+            alt={itemName}
+            w={"100%"}
+            h={"100%"}
+            objectFit={"contain"}
+          />
+        </Box>
 
         {/* PRICE, NAME */}
 
-        <Flex flex={"1"} w={"100%"} flexDir={"column"} gap={"10px"} justifyContent={"center"} alignItems={"center"}>
+        <Flex
+          flex={"1"}
+          w={"100%"}
+          flexDir={"column"}
+          gap={"10px"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           {/* name */}
           <Text flex={"1.3"}>{itemName}</Text>
 

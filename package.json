@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.34.0",
+    "@cloudinary/react": "^1.14.4",
+    "@cloudinary/url-gen": "^1.22.0",
     "@fontsource-variable/baloo-2": "^5.2.7",
     "@react-spring/web": "^10.1.2",
     "firebase": "^12.15.0",

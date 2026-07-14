@@ -6,18 +6,24 @@ import {
   Grid,
   GridItem,
   Heading,
-  Text
+  Text,
+  Image,
 } from "@chakra-ui/react";
 import MyFlex from "../components/elements/MyFlex";
 import MyButton from "../components/elements/MyButton";
 import MenuItem from "../components/elements/MenuItem";
 import PopupLayer from "../components/elements/PopupLayer";
 import { useState, useEffect } from "react";
-//import { useNavigate } from "react-router";
-import bg from "../assets/bg.png";
 import { animated, useSpring } from "@react-spring/web";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
+//import { useNavigate } from "react-router";
+
+// image imports
+import bg from "../assets/bg.png";
+import na from "../assets/na.png";
+import vendly from "../assets/vendly.png";
+
 
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
@@ -31,6 +37,7 @@ interface Item {
   id: number;
   name: string;
   price: number;
+  imageUrl: string;
 }
 
 interface OrderedItem extends Item {
@@ -41,7 +48,7 @@ const Menu = () => {
   // states
   const [categories, setCategories] = useState<string[]>([]);
   const [menu, setMenu] = useState<Record<string, Item[]>>({
-    Burgers: [{ name: "loading", price: 0, id: -1 }],
+    Burgers: [{ name: "loading", price: 0, id: -1, imageUrl: na }],
   });
   const [popupHidden, setPopupHidden] = useState(true);
   const [popupItemName, setPopupItemName] = useState("");
@@ -151,13 +158,32 @@ const Menu = () => {
         onClickCancel={() => setPopupHidden(true)}
         onClickConfirm={(_, quantity, itemName, id, price) => {
           console.log(`Confirmed ${quantity} of ${itemName} with ID ${id}`);
+          let itemAlreadyInOrderList = false;
+          const updatedOrder = order.map((item, _) => {
+            if (item.id != id) {
+              return item;
+            }
+            const newItem: OrderedItem = {
+              ...item,
+              quantity: item.quantity + quantity
+            };
+            itemAlreadyInOrderList = true;
+            return newItem;
+          });
+
+          // add this item to the order list
           const orderedItem: OrderedItem = {
             id: id,
             name: itemName,
             price: price,
             quantity: quantity,
+            imageUrl: na,
+          };
+          if (itemAlreadyInOrderList) {
+            setOrder(updatedOrder);
+          } else {
+            setOrder([...order, orderedItem]);
           }
-          setOrder([...order, orderedItem]);
           setPopupHidden(true);
         }}
       />
@@ -230,8 +256,11 @@ const Menu = () => {
           flexDir={"column"}
           overflowY={"auto"}
           overflowX={"hidden"}
+          gap={"50px"}
         >
-          <MyFlex minH={"200px"} flex={0} bgColor={"none"}></MyFlex>
+          <MyFlex minH={"200px"} flex={0} bgColor={"none"}>
+            <Image src={vendly} alt="Background" w={"100%"} h={"100%"} objectFit={"contain"} />
+          </MyFlex>
           {/* Items under the category will be displayed here */}
           <AnimatedGrid
             style={gridSpring}
@@ -246,7 +275,7 @@ const Menu = () => {
               <GridItem w={"100%"} key={i}>
                 <MenuItem
                   w="180px"
-                  h="250px"
+                  h="270px"
                   bg="white"
                   borderRadius="14px"
                   boxShadow={
@@ -268,11 +297,50 @@ const Menu = () => {
         {/* ORDER DISPLAY */}
         <Flex flex={1} h={"100dvh"} padding={"15px"}>
           {/* this is the order display area */}
-          <MyFlex w={"100%"} h={"100%"} flexDir={"column"} gap={"20px"} padding={"10px"} overflowY={"auto"} overflowX={"hidden"}>
+          <MyFlex
+            w={"100%"}
+            h={"100%"}
+            flexDir={"column"}
+            gap={"10px"}
+            padding={"10px"}
+            overflowY={"auto"}
+            overflowX={"hidden"}
+          >
             {order.map((item, i) => (
-              <MyButton key={i} w={"100%"} h={"150px"} flexDir={"column"} gap={"10px"}>
-                <Text>{item.name}</Text>
-                <Text>${item.price.toFixed(2)}</Text>
+              <MyButton
+                key={i}
+                w={"100%"}
+                h={"220px"}
+                flexDir={"column"}
+                gap={"10px"}
+                borderRadius="14px"
+                boxShadow={
+                  "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.2);"
+                }
+              >
+                <Flex
+                  flexDir={"column"}
+                  alignItems={"center"}
+                  gap={"10px"}
+                  justifyContent={"space-between"}
+                  w={"100%"}
+                  h={"100%"}
+                >
+                  <Flex flex="1" bgColor={"rgb(203, 192, 166)"} borderRadius={"14px"}>
+                  </Flex>
+                  {/* item info + quantity */}
+                  <Flex
+                    flexDir={"column"}
+                    alignItems={"begin"}
+                    gap={"5px"}
+                    flex="1"
+                    justifyContent={"center"}
+                  >
+                    <Text>{item.name}</Text>
+                    <Text>${item.price.toFixed(2)}</Text>
+                    <Text>Quantity: {item.quantity}</Text>
+                  </Flex>
+                </Flex>
               </MyButton>
             ))}
           </MyFlex>
