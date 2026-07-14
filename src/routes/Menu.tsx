@@ -6,6 +6,7 @@ import {
   Grid,
   GridItem,
   Heading,
+  Text
 } from "@chakra-ui/react";
 import MyFlex from "../components/elements/MyFlex";
 import MyButton from "../components/elements/MyButton";
@@ -32,6 +33,10 @@ interface Item {
   price: number;
 }
 
+interface OrderedItem extends Item {
+  quantity: number;
+}
+
 const Menu = () => {
   // states
   const [categories, setCategories] = useState<string[]>([]);
@@ -42,6 +47,8 @@ const Menu = () => {
   const [popupItemName, setPopupItemName] = useState("");
   const [popupItemPrice, setPopupItemPrice] = useState(0);
   const [popupItemID, setPopupItemID] = useState(-1);
+  const [order, setOrder] = useState<OrderedItem[]>([]);
+
   // get my menu collection from firestore data base
   async function fillOutMenu() {
     try {
@@ -142,8 +149,15 @@ const Menu = () => {
         hidden={popupHidden}
         foodItemID={popupItemID}
         onClickCancel={() => setPopupHidden(true)}
-        onClickConfirm={(_, quantity, itemName, id) => {
+        onClickConfirm={(_, quantity, itemName, id, price) => {
           console.log(`Confirmed ${quantity} of ${itemName} with ID ${id}`);
+          const orderedItem: OrderedItem = {
+            id: id,
+            name: itemName,
+            price: price,
+            quantity: quantity,
+          }
+          setOrder([...order, orderedItem]);
           setPopupHidden(true);
         }}
       />
@@ -168,6 +182,8 @@ const Menu = () => {
       >
         {/* CATEGORY BAR */}
         <MyFlex
+          overflowY={"auto"}
+          overflowX={"hidden"}
           flex={0}
           flexDir={"column"}
           gap={"0px"}
@@ -249,9 +265,17 @@ const Menu = () => {
             ))}
           </AnimatedGrid>
         </Flex>
-        {/* CART AREA */}
+        {/* ORDER DISPLAY */}
         <Flex flex={1} h={"100dvh"} padding={"15px"}>
-          <MyFlex w={"100%"} h={"100%"}></MyFlex>
+          {/* this is the order display area */}
+          <MyFlex w={"100%"} h={"100%"} flexDir={"column"} gap={"20px"} padding={"10px"} overflowY={"auto"} overflowX={"hidden"}>
+            {order.map((item, i) => (
+              <MyButton key={i} w={"100%"} h={"150px"} flexDir={"column"} gap={"10px"}>
+                <Text>{item.name}</Text>
+                <Text>${item.price.toFixed(2)}</Text>
+              </MyButton>
+            ))}
+          </MyFlex>
         </Flex>
       </Flex>
     </ChakraProvider>

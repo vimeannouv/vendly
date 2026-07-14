@@ -7,7 +7,7 @@ interface PopupLayerProp extends ComponentProps<typeof Flex> {
   name: string;
   hidden?: boolean;
   onClickCancel: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  onClickConfirm: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, quantity: number, itemName: string, id: number) => void;
+  onClickConfirm: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, quantity: number, itemName: string, id: number, price: number) => void;
 }
 
 const PopupLayer = ({
@@ -168,7 +168,7 @@ const PopupLayer = ({
               color={"rgb(52, 117, 50)"}
               fontSize={"2xl"}
               onClick={(e) => {
-                onClickConfirm && onClickConfirm(e, quantity, name, foodItemID);
+                onClickConfirm && onClickConfirm(e, quantity, name, foodItemID, price);
                 buttonClicked();
               }}
             >
