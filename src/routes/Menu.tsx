@@ -33,11 +33,15 @@ interface Item {
 }
 
 const Menu = () => {
-  // test variables
+  // states
   const [categories, setCategories] = useState<string[]>([]);
   const [menu, setMenu] = useState<Record<string, Item[]>>({
     Burgers: [{ name: "loading", price: 0, id: -1 }],
   });
+  const [popupHidden, setPopupHidden] = useState(true);
+  const [popupItemName, setPopupItemName] = useState("");
+  const [popupItemPrice, setPopupItemPrice] = useState(0);
+  const [popupItemID, setPopupItemID] = useState(-1);
   // get my menu collection from firestore data base
   async function fillOutMenu() {
     try {
@@ -66,10 +70,12 @@ const Menu = () => {
         for (const i in unfilteredItemsInCategory) {
           const itemId = unfilteredItemsInCategory[i];
           const item = itemInfo[itemId];
+          item.id = itemId;
           itemsInCategory.push(item);
         }
         temp[category] = itemsInCategory;
       }
+      console.log("Menu from firestore: ", temp);
       setMenu(temp);
     } catch (error) {
       console.error(error);
@@ -81,10 +87,17 @@ const Menu = () => {
 
   const [selectedCategory, setSelectedCategory] = useState("Burgers");
 
-  // helper funcs
+  // aux funcs
 
   const getFoodList = (tabname: string): Item[] => {
     return menu[tabname] ?? [];
+  };
+
+  const selectItem = (name: string, price: number, id: number) => {
+    setPopupItemName(name);
+    setPopupItemPrice(price);
+    setPopupItemID(id);
+    setPopupHidden(false);
   };
 
   // springs
@@ -121,10 +134,20 @@ const Menu = () => {
   return (
     <ChakraProvider value={system}>
       {/* ITEM DESCRIPTION POPUP */}
-      <PopupLayer>
 
+      {/* Add item pop up layer */}
+      <PopupLayer
+        price={popupItemPrice}
+        name={popupItemName}
+        hidden={popupHidden}
+        foodItemID={popupItemID}
+        onClickCancel={() => setPopupHidden(true)}
+        onClickConfirm={(_, quantity, itemName, id) => {
+          console.log(`Confirmed ${quantity} of ${itemName} with ID ${id}`);
+          setPopupHidden(true);
+        }}
+      />
 
-      </PopupLayer>
       {/* HIGHLIGHT EFFECT */}
       <AnimatedBox
         style={highlightSpring}
@@ -215,6 +238,12 @@ const Menu = () => {
                   }
                   itemName={item.name}
                   itemPrice={item.price}
+                  onClick={() => {
+                    selectItem(item.name, item.price, item.id);
+                    console.log(
+                      `Selected item: ${item.name}, Price: ${item.price}, ID: ${item.id}`,
+                    );
+                  }}
                 ></MenuItem>
               </GridItem>
             ))}

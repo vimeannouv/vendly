@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 
 
 const App = () => {
-
+  
   const navigate = useNavigate();
   return (
     <ChakraProvider value={system}>

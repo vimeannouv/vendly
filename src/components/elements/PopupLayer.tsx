@@ -1,22 +1,41 @@
 import { Flex, Box, Text, Button } from "@chakra-ui/react";
-import { useState, type ComponentProps, type ReactNode } from "react";
+import { useState, type ComponentProps } from "react";
 
 interface PopupLayerProp extends ComponentProps<typeof Flex> {
-  children?: ReactNode;
+  price: number;
+  foodItemID: number;
+  name: string;
+  hidden?: boolean;
+  onClickCancel: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClickConfirm: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, quantity: number, itemName: string, id: number) => void;
 }
 
-const PopupLayer = ({ ...rest }: PopupLayerProp) => {
-  const [quantity, setQuantity] = useState(0);
-  
-  function addQuantity(amount: number) {
+const PopupLayer = ({
+  hidden,
+  price,
+  name,
+  foodItemID,
+  onClickCancel,
+  onClickConfirm,
+  ...rest
+}: PopupLayerProp) => {
+  const [quantity, setQuantity] = useState(1);
+
+  // aux func
+ const addQuantity = (amount: number) => {
     const newQuantity = quantity + amount;
-    if (newQuantity < 0) return;
+    if (newQuantity < 1) return;
     if (newQuantity >= 100) return;
     setQuantity(quantity + amount);
   }
 
+  const buttonClicked = () => {
+    setQuantity(1);
+  }
+
   return (
     <Flex
+      hidden={hidden}
       w={"100%"}
       h={"100%"}
       bgColor={"rgba(0, 0, 0, 0.3)"}
@@ -52,7 +71,7 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
         >
           <Flex flexDir={"column"} alignItems={"center"} gap={"20px"}>
             {/* name */}
-            <Text flex={1}>Test Burger</Text>
+            <Text flex={1}>{name}</Text>
             {/* price */}
             <Text
               borderRadius={"30px"}
@@ -66,9 +85,8 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
               justifyContent={"center"}
               textAlign={"center"}
               fontSize={"2xl"}
-              
             >
-              {`$100.99`}
+              {`$${price.toFixed(2)}`}
             </Text>
           </Flex>
           {/* quantity */}
@@ -119,13 +137,48 @@ const PopupLayer = ({ ...rest }: PopupLayerProp) => {
               </Button>
             </Flex>
           </Flex>
+
+          {/* confirmation or cancel button */}
+          <Flex
+            flex={1}
+            flexDir={"row"}
+            padding={"20px"}
+            w={"100%"}
+            gap={"20px"}
+            alignItems={"end"}
+          >
+            {/* cancel */}
+            <Button
+              flex={1}
+              borderRadius={"20px"}
+              h={"60px"}
+              bgColor={"#ffe5e5"}
+              color={"rgb(216, 96, 96)"}
+              fontSize={"2xl"}
+              onClick={(ev)=>{onClickCancel(ev); buttonClicked()}}
+            >
+              Cancel
+            </Button>
+            {/* confirm */}
+            <Button
+              flex={1}
+              borderRadius={"20px"}
+              h={"60px"}
+              bgColor={"#d9ffda"}
+              color={"rgb(52, 117, 50)"}
+              fontSize={"2xl"}
+              onClick={(e) => {
+                onClickConfirm && onClickConfirm(e, quantity, name, foodItemID);
+                buttonClicked();
+              }}
+            >
+              Confirm
+            </Button>
+          </Flex>
         </Flex>
       </Flex>
 
-      <Flex>
-        
-      </Flex>
-
+      <Flex></Flex>
     </Flex>
   );
 };
