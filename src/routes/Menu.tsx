@@ -24,7 +24,6 @@ import bg from "../assets/bg.png";
 import na from "../assets/na.png";
 import vendly from "../assets/vendly.png";
 
-
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
 const gridSpringValues = {
@@ -51,9 +50,7 @@ const Menu = () => {
     Burgers: [{ name: "loading", price: 0, id: -1, imageUrl: na }],
   });
   const [popupHidden, setPopupHidden] = useState(true);
-  const [popupItemName, setPopupItemName] = useState("");
-  const [popupItemPrice, setPopupItemPrice] = useState(0);
-  const [popupItemID, setPopupItemID] = useState(-1);
+  const [popupItem, setPopupItem] = useState<Item>({id: -1, name: "loading", price: 0, imageUrl: na});
   const [order, setOrder] = useState<OrderedItem[]>([]);
 
   // get my menu collection from firestore data base
@@ -107,10 +104,8 @@ const Menu = () => {
     return menu[tabname] ?? [];
   };
 
-  const selectItem = (name: string, price: number, id: number) => {
-    setPopupItemName(name);
-    setPopupItemPrice(price);
-    setPopupItemID(id);
+  const selectItem = (item: Item) => {
+    setPopupItem(item);
     setPopupHidden(false);
   };
 
@@ -151,21 +146,19 @@ const Menu = () => {
 
       {/* Add item pop up layer */}
       <PopupLayer
-        price={popupItemPrice}
-        name={popupItemName}
+        itemObj={popupItem}
         hidden={popupHidden}
-        foodItemID={popupItemID}
         onClickCancel={() => setPopupHidden(true)}
-        onClickConfirm={(_, quantity, itemName, id, price) => {
-          console.log(`Confirmed ${quantity} of ${itemName} with ID ${id}`);
+        onClickConfirm={(_, quantity, itemObj) => {
+          console.log(`Confirmed ${quantity} of ${itemObj.name} with ID ${itemObj.id}`);
           let itemAlreadyInOrderList = false;
           const updatedOrder = order.map((item, _) => {
-            if (item.id != id) {
+            if (item.id != itemObj.id) {
               return item;
             }
             const newItem: OrderedItem = {
               ...item,
-              quantity: item.quantity + quantity
+              quantity: item.quantity + quantity,
             };
             itemAlreadyInOrderList = true;
             return newItem;
@@ -173,11 +166,11 @@ const Menu = () => {
 
           // add this item to the order list
           const orderedItem: OrderedItem = {
-            id: id,
-            name: itemName,
-            price: price,
+            id: itemObj.id,
+            name: itemObj.name,
+            price: itemObj.price,
             quantity: quantity,
-            imageUrl: na,
+            imageUrl: itemObj.imageUrl,
           };
           if (itemAlreadyInOrderList) {
             setOrder(updatedOrder);
@@ -259,7 +252,13 @@ const Menu = () => {
           gap={"50px"}
         >
           <MyFlex minH={"200px"} flex={0} bgColor={"none"}>
-            <Image src={vendly} alt="Background" w={"100%"} h={"100%"} objectFit={"contain"} />
+            <Image
+              src={vendly}
+              alt="Background"
+              w={"100%"}
+              h={"100%"}
+              objectFit={"contain"}
+            />
           </MyFlex>
           {/* Items under the category will be displayed here */}
           <AnimatedGrid
@@ -283,8 +282,9 @@ const Menu = () => {
                   }
                   itemName={item.name}
                   itemPrice={item.price}
+                  imageUrl={item.imageUrl}
                   onClick={() => {
-                    selectItem(item.name, item.price, item.id);
+                    selectItem(item);
                     console.log(
                       `Selected item: ${item.name}, Price: ${item.price}, ID: ${item.id}`,
                     );
@@ -326,7 +326,14 @@ const Menu = () => {
                   w={"100%"}
                   h={"100%"}
                 >
-                  <Flex flex="1" bgColor={"rgb(203, 192, 166)"} borderRadius={"14px"}>
+                  <Flex width={"100%"} h={"60%"} justifyContent={"center"} alignItems={"center"}>
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.name}
+                      maxW={"100%"}
+                      h={"auto"}
+                      objectFit={"contain"}
+                    />
                   </Flex>
                   {/* item info + quantity */}
                   <Flex

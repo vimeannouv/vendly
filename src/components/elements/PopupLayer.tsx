@@ -1,35 +1,34 @@
 import { Flex, Box, Text, Button, Image } from "@chakra-ui/react";
 import { useState, type ComponentProps } from "react";
 import na from "../../assets/na.png";
+
 interface PopupLayerProp extends ComponentProps<typeof Flex> {
-  price: number;
-  foodItemID: number;
-  name: string;
-  hidden?: boolean;
-  imageUrl?: string;
+  itemObj: Item;
   onClickCancel: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onClickConfirm: (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     quantity: number,
-    itemName: string,
-    id: number,
-    price: number,
+    item: Item,
   ) => void;
+}
+
+interface Item {
+  id: number;
+  name: string;
+  price: number;
+  imageUrl: string;
 }
 
 const PopupLayer = ({
   hidden,
-  price,
-  name,
-  foodItemID,
-  imageUrl,
+  itemObj,
   onClickCancel,
   onClickConfirm,
   ...rest
 }: PopupLayerProp) => {
   const [quantity, setQuantity] = useState(1);
 
-  if (!imageUrl) imageUrl = na;
+  if (!itemObj.imageUrl) itemObj.imageUrl = na;
   // aux func
   const addQuantity = (amount: number) => {
     const newQuantity = quantity + amount;
@@ -53,8 +52,8 @@ const PopupLayer = ({
       {...rest}
     >
       <Flex
-        w={"70%"}
-        h={"70%"}
+        w={"80%"}
+        h={"80%"}
         bgColor={"rgb(255, 255, 255)"}
         position={"fixed"}
         zIndex={"2"}
@@ -67,7 +66,13 @@ const PopupLayer = ({
       >
         {/* IMAGE DISPLAY */}
         <Box flex={1} h={"100%"}>
-          <Image src={imageUrl} alt={name} w={"100%"} h={"100%"} objectFit={"contain"} />
+          <Image
+            src={itemObj.imageUrl}
+            alt={itemObj.name}
+            w={"100%"}
+            h={"100%"}
+            objectFit={"contain"}
+          />
         </Box>
         {/* ITEM NAME, PRICE, QUANTITY */}
         <Flex
@@ -77,14 +82,14 @@ const PopupLayer = ({
           alignItems={"center"}
           padding={"30px"}
           fontSize={"3xl"}
-          gap={"6px"}
+          gap={"30px"}
           justifyContent={"space-between"}
           overflowY={"auto"}
           overflowX={"hidden"}
         >
           <Flex flexDir={"column"} alignItems={"center"} gap={"20px"}>
             {/* name */}
-            <Text flex={1}>{name}</Text>
+            <Text flex={1}>{itemObj.name}</Text>
             {/* price */}
             <Text
               borderRadius={"30px"}
@@ -99,7 +104,7 @@ const PopupLayer = ({
               textAlign={"center"}
               fontSize={"2xl"}
             >
-              {`$${price.toFixed(2)}`}
+              {`$${itemObj.price.toFixed(2)}`}
             </Text>
           </Flex>
           {/* quantity */}
@@ -184,8 +189,7 @@ const PopupLayer = ({
               color={"rgb(52, 117, 50)"}
               fontSize={"2xl"}
               onClick={(e) => {
-                onClickConfirm &&
-                  onClickConfirm(e, quantity, name, foodItemID, price);
+                onClickConfirm && onClickConfirm(e, quantity, itemObj);
                 buttonClicked();
               }}
             >
