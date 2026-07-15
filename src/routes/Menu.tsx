@@ -17,6 +17,7 @@ import { useState, useEffect } from "react";
 import { animated, useSpring } from "@react-spring/web";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import CancelOrConfirm from "../components/elements/CancelOrConfirm";
 //import { useNavigate } from "react-router";
 
 // image imports
@@ -50,7 +51,12 @@ const Menu = () => {
     Burgers: [{ name: "loading", price: 0, id: -1, imageUrl: na }],
   });
   const [popupHidden, setPopupHidden] = useState(true);
-  const [popupItem, setPopupItem] = useState<Item>({id: -1, name: "loading", price: 0, imageUrl: na});
+  const [popupItem, setPopupItem] = useState<Item>({
+    id: -1,
+    name: "loading",
+    price: 0,
+    imageUrl: na,
+  });
   const [order, setOrder] = useState<OrderedItem[]>([]);
 
   // get my menu collection from firestore data base
@@ -142,15 +148,20 @@ const Menu = () => {
 
   return (
     <ChakraProvider value={system}>
-      {/* ITEM DESCRIPTION POPUP */}
 
+      {/* pop up layer for when the user clicks confirm in the my order section */}
+      <CancelOrConfirm>
+
+      </CancelOrConfirm>
       {/* Add item pop up layer */}
       <PopupLayer
         itemObj={popupItem}
         hidden={popupHidden}
         onClickCancel={() => setPopupHidden(true)}
         onClickConfirm={(_, quantity, itemObj) => {
-          console.log(`Confirmed ${quantity} of ${itemObj.name} with ID ${itemObj.id}`);
+          console.log(
+            `Confirmed ${quantity} of ${itemObj.name} with ID ${itemObj.id}`,
+          );
           let itemAlreadyInOrderList = false;
           const updatedOrder = order.map((item, _) => {
             if (item.id != itemObj.id) {
@@ -295,11 +306,20 @@ const Menu = () => {
           </AnimatedGrid>
         </Flex>
         {/* ORDER DISPLAY */}
-        <Flex flex={1} h={"100dvh"} padding={"15px"}>
+        <Flex
+          flex={1}
+          h={"100dvh"}
+          padding={"15px"}
+          flexDir={"column"}
+          gap={"10px"}
+        >
+          <Text textAlign={"center"} fontSize={"2xl"} fontWeight={"bold"} color={"rgb(100, 68, 41)"}>
+            My Order
+          </Text>
           {/* this is the order display area */}
           <MyFlex
             w={"100%"}
-            h={"100%"}
+            flex="1"
             flexDir={"column"}
             gap={"10px"}
             padding={"10px"}
@@ -326,7 +346,13 @@ const Menu = () => {
                   w={"100%"}
                   h={"100%"}
                 >
-                  <Flex width={"100%"} h={"60%"} justifyContent={"center"} alignItems={"center"}>
+                  {/* image */}
+                  <Flex
+                    width={"100%"}
+                    h={"60%"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                  >
                     <Image
                       src={item.imageUrl}
                       alt={item.name}
@@ -351,6 +377,33 @@ const Menu = () => {
               </MyButton>
             ))}
           </MyFlex>
+          <Flex flex=".1"  gap={"10px"} flexDir={"row"}>
+            {/* confirm button */}
+            <MyButton
+              flex="1"
+              h={"100%"}
+              borderRadius={"20px"}
+              bgColor={"#ffe5e5"}
+              color={"rgb(216, 96, 96)"}
+              fontSize={"md"}
+              boxShadow={"none"}
+            >
+              Cancel  
+            </MyButton>
+
+            {/* cancel button */}
+            <MyButton
+              flex="1"
+              h={"100%"}
+              borderRadius={"20px"}
+              bgColor={"#eaffe5"}
+              color={"rgb(49, 122, 52)"}
+              fontSize={"md"}
+              boxShadow={"none"}
+            >
+              Confirm
+            </MyButton>
+          </Flex>
         </Flex>
       </Flex>
     </ChakraProvider>
