@@ -38,6 +38,7 @@ const CancelOrConfirm = ({
         flexDir={"column"}
         {...rest}
       >
+        
         <Flex
           flex="3"
           justifyContent="center"
@@ -50,7 +51,7 @@ const CancelOrConfirm = ({
 
         {/* yes and no button */}
         <Flex
-          flex="1"
+          minH={"100px"}
           justifyContent="center"
           alignItems="center"
           flexDir="row"

@@ -25,6 +25,7 @@ import bg from "../assets/bg.png";
 import na from "../assets/na.png";
 import vendly from "../assets/vendly.png";
 import { useNavigate } from "react-router";
+import { image } from "@cloudinary/url-gen/qualifiers/source";
 
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
@@ -45,11 +46,9 @@ interface OrderedItem extends Item {
   quantity: number;
 }
 
-
 const Menu = () => {
   // use nav
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // states
   const [categories, setCategories] = useState<string[]>([]);
@@ -58,7 +57,7 @@ const Menu = () => {
   });
 
   // cancel or ocnfirm
-  const [cancelOrConfirmHidden, setCancelOrConfirmHidden] = useState(true)
+  const [cancelOrConfirmHidden, setCancelOrConfirmHidden] = useState(true);
 
   // item add to order pop up stuff
   const [popupHidden, setPopupHidden] = useState(true);
@@ -70,6 +69,16 @@ const Menu = () => {
   });
 
   const [order, setOrder] = useState<OrderedItem[]>([]);
+
+  // editting an item in order already
+  const [edittingItem, setEdittingItem] = useState<OrderedItem>({
+    id: -1,
+    name: "loading",
+    price: 0,
+    imageUrl: na,
+    quantity: 0,
+  });
+  const [edittingItemHidden, setEdittingItemHidden] = useState(true);
 
   // get my menu collection from firestore data base
   async function fillOutMenu() {
@@ -124,11 +133,16 @@ const Menu = () => {
 
   const fireCancelOrConfirm = () => {
     setCancelOrConfirmHidden(false);
-  }
+  };
+
+  const editItem = (item: OrderedItem) => {
+    setEdittingItem(item);
+    setEdittingItemHidden(false);
+  };
 
   const onConfirmationOfOrderCancel = () => {
-    navigate("/")
-  }
+    navigate("/");
+  };
 
   const selectItem = (item: Item) => {
     setPopupItem(item);
@@ -142,7 +156,7 @@ const Menu = () => {
     y: 0,
     opacity: 0,
     config: { mass: 6.7, tension: 1000, friction: 75 },
-  }));  
+  }));
   const [buttonDimensions, setButtonDimensions] = useState({ x: 0, y: 0 }); // this is for the highlight element
 
   const [gridSpring, gridSpringController] = useSpring(() => gridSpringValues);
@@ -168,16 +182,46 @@ const Menu = () => {
 
   return (
     <ChakraProvider value={system}>
+      {/* item editting popup layer */}
+
+      <PopupLayer
+        heading={"Edit Item"}
+        itemObj={edittingItem}
+        hidden={edittingItemHidden}
+        onClickConfirm={(_, quantity, itemObj) => {
+          const updatedOrder = order.map((item) => {
+            if (item.id !== itemObj.id) return item;
+
+            return {
+              ...item,
+              quantity,
+            };
+          });
+
+          setOrder(updatedOrder);
+          setEdittingItemHidden(true);
+        }}
+        onClickCancel={() => {
+          setEdittingItemHidden(true);
+        }}
+        initialQuantity={edittingItem.quantity}
+      />
+
       {/* pop up layer for when the user clicks confirm in the my order section */}
       <CancelOrConfirm
         message={"Are you sure you want to cancel your order?"}
-        onClickConfirm={() => {onConfirmationOfOrderCancel()}}
-        onClickCancel={() => {setCancelOrConfirmHidden(true)}}
+        onClickConfirm={() => {
+          onConfirmationOfOrderCancel();
+        }}
+        onClickCancel={() => {
+          setCancelOrConfirmHidden(true);
+        }}
         hidden={cancelOrConfirmHidden}
       ></CancelOrConfirm>
 
       {/* Add item pop up layer */}
       <PopupLayer
+        heading="Add To Order"
         itemObj={popupItem}
         hidden={popupHidden}
         onClickCancel={() => setPopupHidden(true)}
@@ -190,9 +234,13 @@ const Menu = () => {
             if (item.id != itemObj.id) {
               return item;
             }
+            var totalQuantity = item.quantity + quantity;
+            if (totalQuantity >= 100) totalQuantity = 99;
+            if (totalQuantity < 1) totalQuantity = 1;
+
             const newItem: OrderedItem = {
               ...item,
-              quantity: item.quantity + quantity,
+              quantity: totalQuantity,
             };
             itemAlreadyInOrderList = true;
             return newItem;
@@ -330,8 +378,8 @@ const Menu = () => {
         </Flex>
         {/* ORDER DISPLAY */}
         <Flex
-          flex={1}
           h={"100dvh"}
+          w={"300px"}
           padding={"15px"}
           flexDir={"column"}
           gap={"10px"}
@@ -358,16 +406,19 @@ const Menu = () => {
               <MyButton
                 key={i}
                 w={"100%"}
-                h={"220px"}
+                h={"140px"}
                 flexDir={"column"}
                 gap={"10px"}
                 borderRadius="14px"
                 boxShadow={
                   "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.2);"
                 }
+                onClick={() => {
+                  editItem(item);
+                }}
               >
                 <Flex
-                  flexDir={"column"}
+                  flexDir={"row"}
                   alignItems={"center"}
                   gap={"10px"}
                   justifyContent={"space-between"}
@@ -379,8 +430,8 @@ const Menu = () => {
                     <Image
                       src={item.imageUrl}
                       alt={item.name}
-                      w="100%"
-                      h="100%"
+                      w="90%"
+                      h="90%"
                       objectFit="contain"
                     />
                   </Flex>

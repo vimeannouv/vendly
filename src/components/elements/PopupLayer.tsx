@@ -1,5 +1,5 @@
 import { Flex, Box, Text, Button, Image } from "@chakra-ui/react";
-import { useState, type ComponentProps } from "react";
+import { useState, type ComponentProps, useEffect } from "react";
 import na from "../../assets/na.png";
 
 interface PopupLayerProp extends ComponentProps<typeof Flex> {
@@ -11,6 +11,8 @@ interface PopupLayerProp extends ComponentProps<typeof Flex> {
     quantity: number,
     item: Item,
   ) => void;
+  heading?: string;
+  initialQuantity?: number;
 }
 
 interface Item {
@@ -23,11 +25,16 @@ interface Item {
 const PopupLayer = ({
   hidden,
   itemObj,
+  heading,
   onClickCancel,
   onClickConfirm,
+  initialQuantity,
   ...rest
 }: PopupLayerProp) => {
-  const [quantity, setQuantity] = useState(1);
+  console.log(initialQuantity);
+  const [quantity, setQuantity] = useState(
+    initialQuantity ? initialQuantity : 1,
+  );
 
   if (!itemObj.imageUrl) itemObj.imageUrl = na;
   // aux func
@@ -41,6 +48,12 @@ const PopupLayer = ({
   const buttonClicked = () => {
     setQuantity(1);
   };
+
+  useEffect(() => {
+    if (!hidden) {
+      setQuantity(initialQuantity ?? 1);
+    }
+  }, [hidden, initialQuantity]);
 
   return (
     <Flex
@@ -88,6 +101,15 @@ const PopupLayer = ({
           overflowY={"auto"}
           overflowX={"hidden"}
         >
+          <Flex
+            flex="1"
+            justifyContent="center"
+            alignItems="center"
+            fontSize="4xl"
+            fontWeight={"bold"}
+          >
+            <Text>{heading ? heading : ""}</Text>
+          </Flex>
           <Flex flexDir={"column"} alignItems={"center"} gap={"20px"}>
             {/* name */}
             <Text flex={1}>{itemObj.name}</Text>
