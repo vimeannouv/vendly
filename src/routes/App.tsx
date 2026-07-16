@@ -13,40 +13,38 @@ const App = () => {
         w={"100%"}
         h={"100%"}
         direction={"column"}
-        justifyContent={"center"}
+        justifyContent={"space-between"}
         alignItems={"center"}
         gap={"100px"}
         paddingTop={"50px"}
       >
         <Heading
-          as={"h3"}
+        flex={"1"}
           fontSize={"4xl"}
           colorPalette={"beige"}
           color={"colorPalette.fg"}
           textAlign={"center"}
         >
-          What is this device being used for
+          Welcome to Vendly Kiosk!
         </Heading>
         <Flex
           w="100dvw"
-          h="60%"
+          flex={"1"}
           justifyContent={"center"}
           alignItems={"center"}
           gap={"30px"}
           flexDirection={"column"}
         >
           <MyButton
-            w={"300px"}
+            w={"500px"}
+            h={"100%"}
             fontSize={"lg"}
             onClick={() => {
               console.log("Taking client to the menu");
               navigate("/menu");
             }}
           >
-            Customer
-          </MyButton>
-          <MyButton w={"300px"} fontSize={"lg"}>
-            Employee Work
+            I am Ready To Order!
           </MyButton>
         </Flex>
       </Flex>

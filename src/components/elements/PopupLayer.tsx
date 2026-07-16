@@ -3,6 +3,7 @@ import { useState, type ComponentProps } from "react";
 import na from "../../assets/na.png";
 
 interface PopupLayerProp extends ComponentProps<typeof Flex> {
+  hidden: boolean;
   itemObj: Item;
   onClickCancel: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onClickConfirm: (

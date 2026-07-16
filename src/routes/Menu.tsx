@@ -24,6 +24,7 @@ import CancelOrConfirm from "../components/elements/CancelOrConfirm";
 import bg from "../assets/bg.png";
 import na from "../assets/na.png";
 import vendly from "../assets/vendly.png";
+import { useNavigate } from "react-router";
 
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
@@ -44,12 +45,22 @@ interface OrderedItem extends Item {
   quantity: number;
 }
 
+
 const Menu = () => {
+  // use nav
+
+  const navigate = useNavigate()
+
   // states
   const [categories, setCategories] = useState<string[]>([]);
   const [menu, setMenu] = useState<Record<string, Item[]>>({
     Burgers: [{ name: "loading", price: 0, id: -1, imageUrl: na }],
   });
+
+  // cancel or ocnfirm
+  const [cancelOrConfirmHidden, setCancelOrConfirmHidden] = useState(true)
+
+  // item add to order pop up stuff
   const [popupHidden, setPopupHidden] = useState(true);
   const [popupItem, setPopupItem] = useState<Item>({
     id: -1,
@@ -57,6 +68,7 @@ const Menu = () => {
     price: 0,
     imageUrl: na,
   });
+
   const [order, setOrder] = useState<OrderedItem[]>([]);
 
   // get my menu collection from firestore data base
@@ -110,6 +122,14 @@ const Menu = () => {
     return menu[tabname] ?? [];
   };
 
+  const fireCancelOrConfirm = () => {
+    setCancelOrConfirmHidden(false);
+  }
+
+  const onConfirmationOfOrderCancel = () => {
+    navigate("/")
+  }
+
   const selectItem = (item: Item) => {
     setPopupItem(item);
     setPopupHidden(false);
@@ -122,7 +142,7 @@ const Menu = () => {
     y: 0,
     opacity: 0,
     config: { mass: 6.7, tension: 1000, friction: 75 },
-  }));
+  }));  
   const [buttonDimensions, setButtonDimensions] = useState({ x: 0, y: 0 }); // this is for the highlight element
 
   const [gridSpring, gridSpringController] = useSpring(() => gridSpringValues);
@@ -148,11 +168,14 @@ const Menu = () => {
 
   return (
     <ChakraProvider value={system}>
-
       {/* pop up layer for when the user clicks confirm in the my order section */}
-      <CancelOrConfirm>
+      <CancelOrConfirm
+        message={"Are you sure you want to cancel your order?"}
+        onClickConfirm={() => {onConfirmationOfOrderCancel()}}
+        onClickCancel={() => {setCancelOrConfirmHidden(true)}}
+        hidden={cancelOrConfirmHidden}
+      ></CancelOrConfirm>
 
-      </CancelOrConfirm>
       {/* Add item pop up layer */}
       <PopupLayer
         itemObj={popupItem}
@@ -313,7 +336,12 @@ const Menu = () => {
           flexDir={"column"}
           gap={"10px"}
         >
-          <Text textAlign={"center"} fontSize={"2xl"} fontWeight={"bold"} color={"rgb(100, 68, 41)"}>
+          <Text
+            textAlign={"center"}
+            fontSize={"2xl"}
+            fontWeight={"bold"}
+            color={"rgb(100, 68, 41)"}
+          >
             My Order
           </Text>
           {/* this is the order display area */}
@@ -347,27 +375,21 @@ const Menu = () => {
                   h={"100%"}
                 >
                   {/* image */}
-                  <Flex
-                    width={"100%"}
-                    h={"60%"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                  >
+                  <Flex flex={1} minH={0}>
                     <Image
                       src={item.imageUrl}
                       alt={item.name}
-                      maxW={"100%"}
-                      h={"auto"}
-                      objectFit={"contain"}
+                      w="100%"
+                      h="100%"
+                      objectFit="contain"
                     />
                   </Flex>
                   {/* item info + quantity */}
                   <Flex
-                    flexDir={"column"}
-                    alignItems={"begin"}
-                    gap={"5px"}
-                    flex="1"
-                    justifyContent={"center"}
+                    flexShrink={0}
+                    align="center"
+                    direction="column"
+                    gap={1}
                   >
                     <Text>{item.name}</Text>
                     <Text>${item.price.toFixed(2)}</Text>
@@ -377,7 +399,7 @@ const Menu = () => {
               </MyButton>
             ))}
           </MyFlex>
-          <Flex flex=".1"  gap={"10px"} flexDir={"row"}>
+          <Flex flex=".1" gap={"10px"} flexDir={"row"}>
             {/* confirm button */}
             <MyButton
               flex="1"
@@ -387,8 +409,9 @@ const Menu = () => {
               color={"rgb(216, 96, 96)"}
               fontSize={"md"}
               boxShadow={"none"}
+              onClick={fireCancelOrConfirm}
             >
-              Cancel  
+              Cancel
             </MyButton>
 
             {/* cancel button */}
