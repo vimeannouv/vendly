@@ -15,12 +15,15 @@ import MyFlex from "../components/elements/MyFlex";
 import MyButton from "../components/elements/MyButton";
 import MenuItem from "../components/elements/MenuItem";
 import PopupLayer from "../components/elements/PopupLayer";
+import OrderReviewPopup from "../components/elements/OrderReviewPopup";
 import { useState, useEffect } from "react";
 import { animated, useSpring } from "@react-spring/web";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import CancelOrConfirm from "../components/elements/CancelOrConfirm";
-import { FaTrash } from "react-icons/fa";
+import { FaLeaf, FaTrash } from "react-icons/fa";
+import { Spinner } from "@chakra-ui/react";
+import type { Item, OrderedItem } from "../GlobalTypes";
 
 //import { useNavigate } from "react-router";
 
@@ -29,7 +32,6 @@ import bg from "../assets/bg.png";
 import na from "../assets/na.png";
 import vendly from "../assets/vendly.png";
 import { useNavigate } from "react-router";
-import { image } from "@cloudinary/url-gen/qualifiers/source";
 
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
@@ -38,17 +40,6 @@ const gridSpringValues = {
   to: { opacity: 1, transform: "scale(1)", top: "0%" },
   config: { tension: 600, friction: 60 },
 };
-
-interface Item {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-}
-
-interface OrderedItem extends Item {
-  quantity: number;
-}
 
 const Menu = () => {
   // use nav
@@ -59,6 +50,7 @@ const Menu = () => {
   const [menu, setMenu] = useState<Record<string, Item[]>>({
     Burgers: [{ name: "loading", price: 0, id: -1, imageUrl: na }],
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   // cancel or ocnfirm
   const [cancelOrConfirmHidden, setCancelOrConfirmHidden] = useState(true);
@@ -71,6 +63,9 @@ const Menu = () => {
     price: 0,
     imageUrl: na,
   });
+
+  // order review popup
+  const [reviewOrder, setReviewOrder] = useState(false);
 
   const [order, setOrder] = useState<OrderedItem[]>([]);
 
@@ -119,6 +114,7 @@ const Menu = () => {
       }
       console.log("Menu from firestore: ", temp);
       setMenu(temp);
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -186,6 +182,42 @@ const Menu = () => {
 
   return (
     <ChakraProvider value={system}>
+      <OrderReviewPopup
+        itemsInOrder={order}
+        hidden={!reviewOrder}
+        onClickBack={() => {
+          setReviewOrder(false);
+          console.log("keep editting!")
+        }}
+        onClickCheckout={(order) => {}}
+      />
+
+      {/* loading screen */}
+      <Presence
+        present={isLoading}
+        animationName={{
+          _closed: "fade-out",
+        }}
+        animationDuration={"600ms"}
+        w="100dvw"
+        h="100dvh"
+        pos={"fixed"}
+        zIndex={9999999}
+        unmountOnExit
+      >
+        <Flex
+          bgColor="rgba(0, 0, 0, 0.76)"
+          top={0}
+          left={0}
+          w={"100%"}
+          h={"100%"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Spinner size={"xl"} color={"white"} />
+        </Flex>
+      </Presence>
+
       {/* item editting popup layer */}
 
       <PopupLayer
@@ -428,8 +460,8 @@ const Menu = () => {
             {order.map((item, i) => (
               <Presence
                 present={true}
-                animationStyle={{_open:"scale-fade-in"}}
-                animationDuration="500ms"
+                animationName={{ _open: "slide-from-right-full" }}
+                animationDuration="300ms"
                 w={"100%"}
                 h={"120px"}
                 unmountOnExit
@@ -483,7 +515,7 @@ const Menu = () => {
             ))}
           </MyFlex>
           <Flex flex=".1" gap={"10px"} flexDir={"row"}>
-            {/* confirm button */}
+            {/* canc order butt */}
             <MyButton
               flex="1"
               h={"100%"}
@@ -497,7 +529,7 @@ const Menu = () => {
               Cancel
             </MyButton>
 
-            {/* cancel button */}
+            {/* conf butt */}
             <MyButton
               flex="1"
               h={"100%"}
@@ -506,6 +538,9 @@ const Menu = () => {
               color={"rgb(49, 122, 52)"}
               fontSize={"md"}
               boxShadow={"none"}
+              onClick={() => {
+                setReviewOrder(true);
+              }}
             >
               Confirm
             </MyButton>
