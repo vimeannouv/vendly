@@ -8,6 +8,8 @@ import {
   Heading,
   Text,
   Image,
+  Button,
+  Presence,
 } from "@chakra-ui/react";
 import MyFlex from "../components/elements/MyFlex";
 import MyButton from "../components/elements/MyButton";
@@ -18,6 +20,8 @@ import { animated, useSpring } from "@react-spring/web";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import CancelOrConfirm from "../components/elements/CancelOrConfirm";
+import { FaTrash } from "react-icons/fa";
+
 //import { useNavigate } from "react-router";
 
 // image imports
@@ -205,7 +209,26 @@ const Menu = () => {
           setEdittingItemHidden(true);
         }}
         initialQuantity={edittingItem.quantity}
-      />
+      >
+        {" "}
+        {/* trash icon to remove editting items */}
+        <Button
+          position={"fixed"}
+          hidden={edittingItemHidden}
+          top={"-10px"}
+          left={"-10px"}
+          bgColor={"rgb(255, 79, 79)"}
+          h={"40px"}
+          w={"auto"}
+          onClick={() => {
+            setOrder(order.filter((item) => item.id !== edittingItem.id));
+            setEdittingItemHidden(true);
+          }}
+        >
+          <FaTrash color="rgb(255, 255, 255)" />
+          <Text>Remove Item</Text>
+        </Button>
+      </PopupLayer>
 
       {/* pop up layer for when the user clicks confirm in the my order section */}
       <CancelOrConfirm
@@ -403,51 +426,60 @@ const Menu = () => {
             overflowX={"hidden"}
           >
             {order.map((item, i) => (
-              <MyButton
-                key={i}
+              <Presence
+                present={true}
+                animationStyle={{_open:"scale-fade-in"}}
+                animationDuration="500ms"
                 w={"100%"}
-                h={"140px"}
-                flexDir={"column"}
-                gap={"10px"}
-                borderRadius="14px"
-                boxShadow={
-                  "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.2);"
-                }
-                onClick={() => {
-                  editItem(item);
-                }}
+                h={"120px"}
+                unmountOnExit
+                key={i}
               >
-                <Flex
-                  flexDir={"row"}
-                  alignItems={"center"}
-                  gap={"10px"}
-                  justifyContent={"space-between"}
+                <MyButton
                   w={"100%"}
                   h={"100%"}
+                  flexDir={"column"}
+                  gap={"10px"}
+                  borderRadius="14px"
+                  boxShadow={
+                    "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.2);"
+                  }
+                  onClick={() => {
+                    editItem(item);
+                  }}
                 >
-                  {/* image */}
-                  <Flex flex={1} minH={0}>
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.name}
-                      w="90%"
-                      h="90%"
-                      objectFit="contain"
-                    />
-                  </Flex>
-                  {/* item info + quantity */}
                   <Flex
-                    flexShrink={0}
-                    align="center"
-                    direction="column"
-                    gap={1}
+                    flexDir={"row"}
+                    alignItems={"center"}
+                    gap={"10px"}
+                    justifyContent={"space-between"}
+                    w={"100%"}
+                    h={"100%"}
                   >
-                    <Text>{item.name}</Text>
-                    <Text>${item.price.toFixed(2)}</Text>
-                    <Text>Quantity: {item.quantity}</Text>
+                    {/* image */}
+                    <Flex flex={1} minH={0}>
+                      <Image
+                        src={item.imageUrl}
+                        alt={item.name}
+                        w="90%"
+                        h="90%"
+                        objectFit="contain"
+                      />
+                    </Flex>
+                    {/* item info + quantity */}
+                    <Flex
+                      flexShrink={0}
+                      align="center"
+                      direction="column"
+                      gap={1}
+                    >
+                      <Text>{item.name}</Text>
+                      <Text>${item.price.toFixed(2)}</Text>
+                      <Text>Quantity: {item.quantity}</Text>
+                    </Flex>
                   </Flex>
-                </Flex>
-              </MyButton>
+                </MyButton>
+              </Presence>
             ))}
           </MyFlex>
           <Flex flex=".1" gap={"10px"} flexDir={"row"}>
