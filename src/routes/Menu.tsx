@@ -24,6 +24,7 @@ import CancelOrConfirm from "../components/elements/CancelOrConfirm";
 import { FaLeaf, FaTrash } from "react-icons/fa";
 import { Spinner } from "@chakra-ui/react";
 import type { Item, OrderedItem } from "../GlobalTypes";
+import ErrorPopup from "../components/elements/ErrorPopup";
 
 //import { useNavigate } from "react-router";
 
@@ -32,6 +33,8 @@ import bg from "../assets/bg.png";
 import na from "../assets/na.png";
 import vendly from "../assets/vendly.png";
 import { useNavigate } from "react-router";
+
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
@@ -78,6 +81,10 @@ const Menu = () => {
     quantity: 0,
   });
   const [edittingItemHidden, setEdittingItemHidden] = useState(true);
+
+  // error popup
+  const [errorMsg, setErrorMsg] = useState("error test message");
+  const [errorPopupHidden, setErrorPopupHidden] = useState(true);
 
   // get my menu collection from firestore data base
   async function fillOutMenu() {
@@ -182,14 +189,49 @@ const Menu = () => {
 
   return (
     <ChakraProvider value={system}>
+      {/* general error popup */}
+      <ErrorPopup
+        onClickOkay={() => {
+          setErrorPopupHidden(true);
+        }}
+        hidden={errorPopupHidden}
+      >
+        {errorMsg}
+      </ErrorPopup>
+
+      {/* order review */}
       <OrderReviewPopup
         itemsInOrder={order}
         hidden={!reviewOrder}
         onClickBack={() => {
           setReviewOrder(false);
-          console.log("keep editting!")
+          console.log("keep editting!");
         }}
-        onClickCheckout={(order) => {}}
+        onClickCheckout={async (order) => {
+          // fire err msg if there is  no items in order
+          if (order.length <= 0) {
+            setReviewOrder(false);
+            setErrorMsg("You don't have any items!");
+            setErrorPopupHidden(false);
+            return;
+          }
+          setIsLoading(true);
+          const orderNumber = `${new Date().getHours()}${Math.floor(100 + Math.random() * 900)}`; // order  number is comprised of the hour + random number from 100 to 999
+          try {
+            await updateDoc(doc(db, "orders", "orders"), {
+              orders: arrayUnion({
+                ...order,
+                createdAt: new Date(),
+                status: "pending",
+                orderNumber: orderNumber
+              }),
+            });
+            setIsLoading(false);
+            console.log("Success!");
+          } catch (err) {
+            console.error(err);
+          }
+        }}
       />
 
       {/* loading screen */}
