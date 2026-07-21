@@ -1,23 +1,20 @@
 import { Flex, Button, Text, Presence } from "@chakra-ui/react";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
-interface CancelOrCOnfirmProp extends ComponentProps<typeof Flex> {
-  message: string;
+interface OrderFinishedProp extends ComponentProps<typeof Flex> {
   hidden: boolean;
   onClickConfirm: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  onClickCancel: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  children  : ReactNode
 }
 
-const CancelOrConfirm = ({
-  message,
-  hidden,
-  onClickConfirm,
-  onClickCancel,
+const OrderFinished = ({
+    hidden,
+    onClickConfirm,
+    children,
   ...rest
-}: CancelOrCOnfirmProp) => {
+}: OrderFinishedProp) => {
   return (
     <Presence
-      present={!hidden}
       animationName={{
         _open: "fade-in",
         _closed: "fade-out",
@@ -49,8 +46,8 @@ const CancelOrConfirm = ({
           unmountOnExit
         >
           <Flex
-            w={"80%"}
-            h={"80%"}
+            w={"98%"}
+            h={"98%"}
             bgColor={"rgb(255, 255, 255)"}
             position={"fixed"}
             zIndex={"2"}
@@ -69,10 +66,10 @@ const CancelOrConfirm = ({
               fontSize="2xl"
               padding="20px"
             >
-              <Text>{message}</Text>
+              <Text>{children}</Text>
             </Flex>
 
-            {/* yes and no button */}
+            {/*okay button*/}
             <Flex
               minH={"100px"}
               justifyContent="center"
@@ -87,24 +84,11 @@ const CancelOrConfirm = ({
                 flex={1}
                 borderRadius={"15px"}
                 h={"100%"}
-                bgColor={"rgb(255, 185, 185)"}
-                color={"rgb(140, 66, 66)"}
-                fontSize={"2xl"}
-                onClick={onClickCancel}
-              >
-                Nope, I'll stay
-              </Button>
-              <Button
-                flex={1}
-                borderRadius={"15px"}
-                h={"100%"}
-                bgColor={"rgb(201, 255, 185)"}
-                color={"rgb(57, 108, 43)"}
+                bgColor={"gray"}
+                color={"white"}
                 fontSize={"2xl"}
                 onClick={onClickConfirm}
-              >
-                Yes, I want to cancel
-              </Button>
+              >Alright, Got It</Button>
             </Flex>
           </Flex>
         </Presence>
@@ -113,4 +97,4 @@ const CancelOrConfirm = ({
   );
 };
 
-export default CancelOrConfirm;
+export default OrderFinished;

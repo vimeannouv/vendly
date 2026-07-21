@@ -10,12 +10,14 @@ import {
   Image,
   Button,
   Presence,
+  Skeleton,
 } from "@chakra-ui/react";
 import MyFlex from "../components/elements/MyFlex";
 import MyButton from "../components/elements/MyButton";
 import MenuItem from "../components/elements/MenuItem";
 import PopupLayer from "../components/elements/PopupLayer";
 import OrderReviewPopup from "../components/elements/OrderReviewPopup";
+import OrderFinished from "../components/elements/OrderFinished";
 import { useState, useEffect } from "react";
 import { animated, useSpring } from "@react-spring/web";
 import { db } from "../firebase";
@@ -25,7 +27,8 @@ import { FaLeaf, FaTrash } from "react-icons/fa";
 import { Spinner } from "@chakra-ui/react";
 import type { Item, OrderedItem } from "../GlobalTypes";
 import ErrorPopup from "../components/elements/ErrorPopup";
-
+import { useRef } from "react";
+import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 //import { useNavigate } from "react-router";
 
 // image imports
@@ -33,8 +36,11 @@ import bg from "../assets/bg.png";
 import na from "../assets/na.png";
 import vendly from "../assets/vendly.png";
 import { useNavigate } from "react-router";
+import { MdCancelPresentation } from "react-icons/md";
 
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { none } from "@cloudinary/url-gen/qualifiers/FontAntialias";
+import { AiFillCalculator } from "react-icons/ai";
 
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
@@ -51,7 +57,7 @@ const Menu = () => {
   // states
   const [categories, setCategories] = useState<string[]>([]);
   const [menu, setMenu] = useState<Record<string, Item[]>>({
-    Burgers: [{ name: "loading", price: 0, id: -1, imageUrl: na }],
+    All: [{ name: "loading", price: 0, id: -1, imageUrl: na }],
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -67,6 +73,9 @@ const Menu = () => {
     imageUrl: na,
   });
 
+  // finished ordering
+  const [orderNumber, setOrderNumber] = useState<string | null>(null)
+  
   // order review popup
   const [reviewOrder, setReviewOrder] = useState(false);
 
@@ -100,9 +109,11 @@ const Menu = () => {
       const categoryDb = menuDb[0] as Record<string, any>;
       const itemsDb = menuDb[1] as Record<string, any>;
       const itemInfo = itemsDb.items;
-      setCategories(
-        Object.keys(categoryDb).filter((category) => category !== "id"),
+      const categoryList = Object.keys(categoryDb).filter(
+        (category) => category !== "id",
       );
+
+      setCategories(["All", ...categoryList]);
       const temp: Record<string, any> = {};
       for (const category in categoryDb) {
         if (category === "id") continue;
@@ -119,6 +130,12 @@ const Menu = () => {
         }
         temp[category] = itemsInCategory;
       }
+      const allCatgeory = [] as Record<string, any>;
+      for (const i in itemInfo) {
+        console.log("......" + itemInfo[i].name);
+        allCatgeory.push(itemInfo[i]);
+      }
+      temp["All"] = allCatgeory;
       console.log("Menu from firestore: ", temp);
       setMenu(temp);
       setIsLoading(false);
@@ -126,11 +143,19 @@ const Menu = () => {
       console.error(error);
     }
   }
+
+  // refs
+  const allCategoryRef = useRef<HTMLButtonElement | null>(null);
+
+  // use effects //////////////
+
+  // on initialisation
+
   useEffect(() => {
     fillOutMenu();
   }, []);
 
-  const [selectedCategory, setSelectedCategory] = useState("Burgers");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   // aux funcs
 
@@ -168,24 +193,30 @@ const Menu = () => {
 
   const [gridSpring, gridSpringController] = useSpring(() => gridSpringValues);
 
-  const playAnimsOnClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
-    // grid animation
+  const playHighlightAnims = (target: HTMLElement) => {
     gridSpringController.start(gridSpringValues);
 
-    // highligher animation
-    const target = ev.currentTarget;
-    if (!target) return;
-
     const rect = target.getBoundingClientRect();
-    const newX = rect.left;
-    const newY = rect.top;
-    setButtonDimensions({ x: rect.width, y: rect.height });
+
+    setButtonDimensions({
+      x: rect.width,
+      y: rect.height,
+    });
+
     highlightSpringController.start({
-      x: newX,
-      y: newY,
+      x: rect.left,
+      y: rect.top,
       opacity: 1,
     });
   };
+
+  useEffect(() => {
+    if (categories.length === 0) return;
+
+    if (allCategoryRef.current) {
+      playHighlightAnims(allCategoryRef.current);
+    }
+  }, [categories]);
 
   return (
     <ChakraProvider value={system}>
@@ -198,6 +229,9 @@ const Menu = () => {
       >
         {errorMsg}
       </ErrorPopup>
+
+      {/* finished ordering */}
+      <OrderFinished hidden={false} onClickConfirm={() => {navigate("/")}}>123</OrderFinished>
 
       {/* order review */}
       <OrderReviewPopup
@@ -223,9 +257,10 @@ const Menu = () => {
                 ...order,
                 createdAt: new Date(),
                 status: "pending",
-                orderNumber: orderNumber
+                orderNumber: orderNumber,
               }),
             });
+            setOrderNumber(orderNumber)
             setIsLoading(false);
             console.log("Success!");
           } catch (err) {
@@ -400,14 +435,16 @@ const Menu = () => {
           >
             Categories
           </Heading>
-          {categories.map((item, i) => (
+          {categories.map((category, i) => (
             <MyButton
+              ref={category == "All" ? allCategoryRef : undefined}
               h={"40px"}
               w={"100%"}
               borderRadius={"0px"}
               onClick={(ev) => {
-                setSelectedCategory(item);
-                playAnimsOnClick(ev);
+                if (selectedCategory === category) return
+                setSelectedCategory(category);
+                playHighlightAnims(ev.currentTarget);
               }}
               bgColor={"transparent"}
               boxShadow={"none"}
@@ -451,24 +488,32 @@ const Menu = () => {
           >
             {getFoodList(selectedCategory).map((item: Item, i: number) => (
               <GridItem w={"100%"} key={i}>
-                <MenuItem
-                  w="180px"
-                  h="270px"
-                  bg="white"
-                  borderRadius="14px"
-                  boxShadow={
-                    "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.2);"
-                  }
-                  itemName={item.name}
-                  itemPrice={item.price}
-                  imageUrl={item.imageUrl}
-                  onClick={() => {
-                    selectItem(item);
-                    console.log(
-                      `Selected item: ${item.name}, Price: ${item.price}, ID: ${item.id}`,
-                    );
-                  }}
-                ></MenuItem>
+                {
+                  // does item a existing image id
+                  item.imageUrl == na ? (
+                    <Skeleton w="180px" h="270px" />
+                  ) : (
+                    // image with good image ids
+                    <MenuItem
+                      w="180px"
+                      h="270px"
+                      bg="white"
+                      borderRadius="14px"
+                      boxShadow={
+                        "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.2);"
+                      }
+                      itemName={item.name}
+                      itemPrice={item.price}
+                      imageUrl={item.imageUrl}
+                      onClick={() => {
+                        selectItem(item);
+                        console.log(
+                          `Selected item: ${item.name}, Price: ${item.price}, ID: ${item.id}`,
+                        );
+                      }}
+                    ></MenuItem>
+                  )
+                }
               </GridItem>
             ))}
           </AnimatedGrid>
@@ -498,6 +543,7 @@ const Menu = () => {
             padding={"10px"}
             overflowY={"auto"}
             overflowX={"hidden"}
+            borderRadius={"12px"}
           >
             {order.map((item, i) => (
               <Presence
@@ -514,7 +560,7 @@ const Menu = () => {
                   h={"100%"}
                   flexDir={"column"}
                   gap={"10px"}
-                  borderRadius="14px"
+                  borderRadius="10px"
                   boxShadow={
                     "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.2);"
                   }
@@ -546,10 +592,23 @@ const Menu = () => {
                       align="center"
                       direction="column"
                       gap={1}
+                      fontWeight={"normal"}
                     >
-                      <Text>{item.name}</Text>
-                      <Text>${item.price.toFixed(2)}</Text>
-                      <Text>Quantity: {item.quantity}</Text>
+                      <Text color={"rgba(1,1,1,1)"}>{item.name}</Text>
+                      <Text color={"grey"}>
+                        ${item.price.toFixed(2) + " each"}
+                      </Text>
+                      <Box
+                        bgColor={"grey"}
+                        maxW={"70px"}
+                        paddingLeft={"10px"}
+                        paddingRight={"10px"}
+                        borderRadius={"20px"}
+                      >
+                        <Text textAlign={"center"} color={"white"}>
+                          {"x" + item.quantity}
+                        </Text>
+                      </Box>
                     </Flex>
                   </Flex>
                 </MyButton>
@@ -561,13 +620,14 @@ const Menu = () => {
             <MyButton
               flex="1"
               h={"100%"}
-              borderRadius={"20px"}
+              borderRadius={"10px"}
               bgColor={"#ffe5e5"}
               color={"rgb(216, 96, 96)"}
               fontSize={"md"}
               boxShadow={"none"}
               onClick={fireCancelOrConfirm}
             >
+              <MdCancelPresentation />
               Cancel
             </MyButton>
 
@@ -575,7 +635,7 @@ const Menu = () => {
             <MyButton
               flex="1"
               h={"100%"}
-              borderRadius={"20px"}
+              borderRadius={"10px"}
               bgColor={"#eaffe5"}
               color={"rgb(49, 122, 52)"}
               fontSize={"md"}
@@ -584,6 +644,7 @@ const Menu = () => {
                 setReviewOrder(true);
               }}
             >
+              <MdOutlineShoppingCartCheckout />
               Confirm
             </MyButton>
           </Flex>

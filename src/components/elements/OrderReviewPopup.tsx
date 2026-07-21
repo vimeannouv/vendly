@@ -60,7 +60,6 @@ const OrderReviewPopup = ({
         h={"100%"}
         bgColor={"rgba(0, 0, 0, 0.3)"}
         {...rest}
-        zIndex={99999}
       >
         <Presence
           present={!hidden}
