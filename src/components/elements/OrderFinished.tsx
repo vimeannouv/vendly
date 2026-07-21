@@ -1,20 +1,23 @@
-import { Flex, Button, Text, Presence } from "@chakra-ui/react";
+import { Flex, Button, Text, Presence, Box } from "@chakra-ui/react";
+import { size } from "@cloudinary/url-gen/qualifiers/textFit";
 import type { ComponentProps, ReactNode } from "react";
+import { FaCartShopping } from "react-icons/fa6";
 
 interface OrderFinishedProp extends ComponentProps<typeof Flex> {
   hidden: boolean;
   onClickConfirm: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  children  : ReactNode
+  children: ReactNode;
 }
 
 const OrderFinished = ({
-    hidden,
-    onClickConfirm,
-    children,
+  hidden,
+  onClickConfirm,
+  children,
   ...rest
 }: OrderFinishedProp) => {
   return (
     <Presence
+      present={!hidden}
       animationName={{
         _open: "fade-in",
         _closed: "fade-out",
@@ -46,9 +49,9 @@ const OrderFinished = ({
           unmountOnExit
         >
           <Flex
-            w={"98%"}
-            h={"98%"}
-            bgColor={"rgb(255, 255, 255)"}
+            w={"80%"}
+            h={"80%"}
+            bgColor={"white"}
             position={"fixed"}
             zIndex={"2"}
             top={"50%"}
@@ -65,8 +68,16 @@ const OrderFinished = ({
               alignItems="center"
               fontSize="2xl"
               padding="20px"
+              flexDir={"column"}
+              gap={"30px"}
             >
-              <Text>{children}</Text>
+     
+                <FaCartShopping size={"100px"}/>
+         
+              <Text>This is your order number</Text>
+              <Text fontSize={"5xl"} fontWeight={"bold"}>
+                {"#" + children}
+              </Text>
             </Flex>
 
             {/*okay button*/}
@@ -88,7 +99,9 @@ const OrderFinished = ({
                 color={"white"}
                 fontSize={"2xl"}
                 onClick={onClickConfirm}
-              >Alright, Got It</Button>
+              >
+                Got It!
+              </Button>
             </Flex>
           </Flex>
         </Presence>

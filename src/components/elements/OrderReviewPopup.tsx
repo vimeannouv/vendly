@@ -60,6 +60,7 @@ const OrderReviewPopup = ({
         h={"100%"}
         bgColor={"rgba(0, 0, 0, 0.3)"}
         {...rest}
+
       >
         <Presence
           present={!hidden}

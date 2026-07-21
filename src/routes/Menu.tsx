@@ -74,8 +74,8 @@ const Menu = () => {
   });
 
   // finished ordering
-  const [orderNumber, setOrderNumber] = useState<string | null>(null)
-  
+  const [orderNumber, setOrderNumber] = useState<string | null>(null);
+
   // order review popup
   const [reviewOrder, setReviewOrder] = useState(false);
 
@@ -231,7 +231,14 @@ const Menu = () => {
       </ErrorPopup>
 
       {/* finished ordering */}
-      <OrderFinished hidden={false} onClickConfirm={() => {navigate("/")}}>123</OrderFinished>
+      <OrderFinished
+        hidden={orderNumber ? false : true}
+        onClickConfirm={() => {
+          navigate("/");
+        }}
+      >
+        {orderNumber}
+      </OrderFinished>
 
       {/* order review */}
       <OrderReviewPopup
@@ -260,7 +267,8 @@ const Menu = () => {
                 orderNumber: orderNumber,
               }),
             });
-            setOrderNumber(orderNumber)
+            setOrderNumber(orderNumber);
+            setReviewOrder(false)
             setIsLoading(false);
             console.log("Success!");
           } catch (err) {
@@ -442,7 +450,7 @@ const Menu = () => {
               w={"100%"}
               borderRadius={"0px"}
               onClick={(ev) => {
-                if (selectedCategory === category) return
+                if (selectedCategory === category) return;
                 setSelectedCategory(category);
                 playHighlightAnims(ev.currentTarget);
               }}
