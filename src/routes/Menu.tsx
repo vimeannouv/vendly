@@ -410,6 +410,7 @@ const Menu = () => {
         bgColor={"rgb(255, 255, 255)"}
         h={buttonDimensions.y}
         w={buttonDimensions.x}
+        borderRadius={"10px"}
       ></AnimatedBox>
 
       <Flex
@@ -427,7 +428,7 @@ const Menu = () => {
           overflowX={"hidden"}
           flex={0}
           flexDir={"column"}
-          gap={"0px"}
+          gap={"10px"}
           borderRadius={"0px"}
           alignItems={"center"}
           padding={"10px"}
@@ -440,6 +441,7 @@ const Menu = () => {
             borderBottom={"2px solid rgb(203, 192, 166)"}
             w={"100%"}
             textAlign={"center"}
+            color={"rgb(113, 87, 42)"}
           >
             Categories
           </Heading>
@@ -447,18 +449,22 @@ const Menu = () => {
             <MyButton
               ref={category == "All" ? allCategoryRef : undefined}
               h={"40px"}
-              w={"100%"}
-              borderRadius={"0px"}
+              w={"90%"}
+              borderRadius={"10px"}
               onClick={(ev) => {
                 if (selectedCategory === category) return;
                 setSelectedCategory(category);
                 playHighlightAnims(ev.currentTarget);
               }}
               bgColor={"transparent"}
-              boxShadow={"none"}
-              transition={".1 ease-out"}
+              boxShadow={"0 7px 0 -2px rgba(0, 0, 0, 0.2)"}
+              transition={".3 ease-out"}
               key={i}
-              borderBottom={"2px solid rgb(203, 192, 166)"}
+              border={"2px solid rgb(203, 192, 166)"}
+              _active={{
+                transform: "scale(0.95)",
+                boxShadow: "0 0 0 -2px rgba(0, 0, 0, 0.5)",
+              }}
             >
               {categories[i]}
             </MyButton>
