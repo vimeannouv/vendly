@@ -5,7 +5,6 @@ import {
   Button,
   Image,
   Presence,
-  List,
 } from "@chakra-ui/react";
 import {
   useState,
@@ -13,7 +12,6 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import na from "../../assets/na.png";
 import type { OrderedItem } from "../../GlobalTypes";
 import { TbArrowBack } from "react-icons/tb";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
@@ -37,7 +35,7 @@ const OrderReviewPopup = ({
   const [totalAmount, setTotalAmount] = useState(0);
   useEffect(() => {
     setTotalAmount(0);
-    itemsInOrder.forEach((item, i) => {
+    itemsInOrder.forEach((item, _) => {
       setTotalAmount(totalAmount + item.price * item.quantity);
     });
   }, [itemsInOrder]);

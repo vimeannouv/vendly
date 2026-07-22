@@ -1,5 +1,4 @@
-import { Flex, Button, Text, Presence, Box } from "@chakra-ui/react";
-import { size } from "@cloudinary/url-gen/qualifiers/textFit";
+import { Flex, Button, Text, Presence } from "@chakra-ui/react";
 import type { ComponentProps, ReactNode } from "react";
 import { FaCartShopping } from "react-icons/fa6";
 

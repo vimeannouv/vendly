@@ -23,13 +23,12 @@ import { animated, useSpring } from "@react-spring/web";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import CancelOrConfirm from "../components/elements/CancelOrConfirm";
-import { FaLeaf, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { Spinner } from "@chakra-ui/react";
 import type { Item, OrderedItem } from "../GlobalTypes";
 import ErrorPopup from "../components/elements/ErrorPopup";
 import { useRef } from "react";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
-//import { useNavigate } from "react-router";
 
 // image imports
 import bg from "../assets/bg.png";
@@ -39,8 +38,6 @@ import { useNavigate } from "react-router";
 import { MdCancelPresentation } from "react-icons/md";
 
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-import { none } from "@cloudinary/url-gen/qualifiers/FontAntialias";
-import { AiFillCalculator } from "react-icons/ai";
 
 const AnimatedGrid = animated(Grid);
 const AnimatedBox = animated(Box);
@@ -182,12 +179,12 @@ const Menu = () => {
   };
 
   // springs
-  //const navigate = useNavigate();
+
   const [highlightSpring, highlightSpringController] = useSpring(() => ({
     x: 0,
     y: 0,
     opacity: 0,
-    config: { mass: 6.7, tension: 1000, friction: 75 },
+    config: { mass: 2, tension: 500, friction: 75 },
   }));
   const [buttonDimensions, setButtonDimensions] = useState({ x: 0, y: 0 }); // this is for the highlight element
 
@@ -268,7 +265,7 @@ const Menu = () => {
               }),
             });
             setOrderNumber(orderNumber);
-            setReviewOrder(false)
+            setReviewOrder(false);
             setIsLoading(false);
             console.log("Success!");
           } catch (err) {
@@ -458,9 +455,9 @@ const Menu = () => {
               }}
               bgColor={"transparent"}
               boxShadow={"0 7px 0 -2px rgba(0, 0, 0, 0.2)"}
-              transition={".3 ease-out"}
               key={i}
               border={"2px solid rgb(203, 192, 166)"}
+              transition={".3 ease-out"}
               _active={{
                 transform: "scale(0.95)",
                 boxShadow: "0 0 0 -2px rgba(0, 0, 0, 0.5)",
@@ -570,14 +567,17 @@ const Menu = () => {
                 key={i}
               >
                 <MyButton
+                  transition={".3 ease-out"}
+                  _active={{
+                    transform: "scale(0.95)",
+                    boxShadow: "0 0 0 -2px rgba(0, 0, 0, 0.5)",
+                  }}
                   w={"100%"}
                   h={"100%"}
                   flexDir={"column"}
                   gap={"10px"}
                   borderRadius="10px"
-                  boxShadow={
-                    "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(0, 0, 0, 0.2);"
-                  }
+                  boxShadow={"0 9px 0 -3px rgba(0, 0, 0, 0.2)"}
                   onClick={() => {
                     editItem(item);
                   }}
