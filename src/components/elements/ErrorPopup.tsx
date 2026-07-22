@@ -1,17 +1,12 @@
 import {
   Flex,
-  Box,
   Text,
   Button,
-  Image,
   Presence,
-  List,
   Heading,
 } from "@chakra-ui/react";
 import {
-  useState,
   type ComponentProps,
-  useEffect,
   type ReactNode,
 } from "react";
 import na from "../../assets/na.png";
