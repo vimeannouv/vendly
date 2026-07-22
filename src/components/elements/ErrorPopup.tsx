@@ -9,7 +9,6 @@ import {
   type ComponentProps,
   type ReactNode,
 } from "react";
-import na from "../../assets/na.png";
 import { IoIosWarning } from "react-icons/io";
 import { FaThumbsUp } from "react-icons/fa6";
 
