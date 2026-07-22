@@ -6,9 +6,11 @@ interface MyButtonProps extends ComponentProps<typeof Button> {
 }
 
 const MyButton = ({ children, ...rest }: MyButtonProps) => {
-
   return (
     <Button
+      css={{
+        WebkitTapHighlightColor: "transparent",
+      }}
       colorPalette={"beige"}
       bgColor={"rgba(255, 255, 255)"}
       borderRadius={"27px"}
@@ -16,9 +18,12 @@ const MyButton = ({ children, ...rest }: MyButtonProps) => {
       variant={"solid"}
       color={"colorPalette.600"}
       fontWeight={"bold"}
-      boxShadow={"0 2px 4px rgba(0,0,0,0.05), 0 8px 16px rgba(0,0,0,0.08), 0 16px 32px rgba(0,0,0,0.06)"}
+      boxShadow={
+        "0 2px 4px rgba(0,0,0,0.05), 0 8px 16px rgba(0,0,0,0.08), 0 16px 32px rgba(0,0,0,0.06)"
+      }
       transition="all 0.13s ease-in-out"
-      {...rest}>
+      {...rest}
+    >
       {children}
     </Button>
   );

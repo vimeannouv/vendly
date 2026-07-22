@@ -403,12 +403,12 @@ const Menu = () => {
       {/* HIGHLIGHT EFFECT */}
       <AnimatedBox
         style={highlightSpring}
-        position={"absolute"}
+        position={"fixed"}
         bgColor={"rgb(255, 255, 255)"}
         h={buttonDimensions.y}
         w={buttonDimensions.x}
         borderRadius={"10px"}
-      ></AnimatedBox>
+      />
 
       <Flex
         bgImage={`url(${bg})`}
